@@ -7,7 +7,6 @@ import Conversion from "./components/Conversion";
 import Ecosystem from "./components/Ecosystem";
 import Footer from "./components/Footer";
 import StageObserver from "./components/StageObserver";
-import NinjaAnchor from "./components/NinjaAnchor";
 import CinematicEnvironment from "./components/CinematicEnvironment";
 import StageAnimations from "./components/StageAnimations";
 
@@ -20,8 +19,7 @@ export default function Home() {
       {/* Stage-by-stage scroll-driven animations + depth overlays */}
       <StageAnimations />
 
-      {/* The 3D Ninja Anchor — replacing the abstract thread entirely */}
-      <NinjaAnchor />
+      {/* The Unified 3D Canvas + Postprocessing Environment */}
       <CinematicEnvironment />
 
       {/* Stage 1: Authority without explanation */}

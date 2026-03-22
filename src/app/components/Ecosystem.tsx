@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 export default function Ecosystem() {
@@ -24,27 +26,58 @@ export default function Ecosystem() {
     },
   ];
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+  };
+
   return (
-    <section id="ecosystem" className="stage-pad relative z-10">
-      <div className="corridor-wide">
-        <div className="mb-6">
-          <h2 className="type-heading text-center">Built by D2V</h2>
-          <p className="type-statement voice-aside text-center mt-2">
+    <section id="ecosystem" className="stage-pad relative z-10 lg:mb-32">
+      <div className="corridor-wide max-w-5xl mx-auto px-4">
+        <div className="mb-12">
+          <h2 className="type-heading text-center opacity-90 text-white tracking-tight">Built by D2V</h2>
+          <p className="type-statement voice-aside text-center mt-3 text-white/50">
             A connected ecosystem of design, architecture, and visualization tools.
           </p>
         </div>
 
-        <div className="ecosystem-grid mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 mt-6 relative z-20">
           {products.map((product) => (
             <a
               key={product.name}
               href={product.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="ecosystem-tile"
+              className="group relative rounded-2xl bg-white/5 backdrop-blur-2xl p-8 overflow-hidden transition-transform duration-500 hover:scale-[1.01]"
+              onMouseMove={handleMouseMove}
             >
-              <h3 className="type-body weight-500 mb-1">{product.name}</h3>
-              <p className="type-micro voice-aside">{product.desc}</p>
+              {/* Dynamic Glow */}
+              <div 
+                className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: 'radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.06), transparent 40%)',
+                }}
+              />
+
+              {/* Inner Gradient Border - true glassmorphism trick */}
+              <div 
+                className="absolute inset-0 rounded-2xl pointer-events-none z-10" 
+                style={{ 
+                  border: '1px solid transparent',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%) border-box',
+                  WebkitMask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
+                  WebkitMaskComposite: 'xor',
+                  maskComposite: 'exclude'
+                }} 
+              />
+              
+              <div className="relative z-20">
+                <h3 className="text-xl md:text-2xl font-medium text-white mb-2 tracking-tight group-hover:text-white transition-colors">{product.name}</h3>
+                <p className="text-white/50 text-sm md:text-base leading-relaxed tracking-wide">{product.desc}</p>
+              </div>
             </a>
           ))}
         </div>
