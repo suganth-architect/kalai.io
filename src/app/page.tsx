@@ -6,7 +6,8 @@ import Desire from "./components/Desire";
 import Conversion from "./components/Conversion";
 import Footer from "./components/Footer";
 import StageObserver from "./components/StageObserver";
-import Thread from "./components/Thread";
+import NinjaAnchor from "./components/NinjaAnchor";
+import CinematicEnvironment from "./components/CinematicEnvironment";
 import StageAnimations from "./components/StageAnimations";
 
 export default function Home() {
@@ -18,8 +19,9 @@ export default function Home() {
       {/* Stage-by-stage scroll-driven animations + depth overlays */}
       <StageAnimations />
 
-      {/* The Thread — signature visual element */}
-      <Thread />
+      {/* The 3D Ninja Anchor — replacing the abstract thread entirely */}
+      <NinjaAnchor />
+      <CinematicEnvironment />
 
       {/* Stage 1: Authority without explanation */}
       <Arrival />

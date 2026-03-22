@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Image from "next/image";
 
 export default function Conversion() {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,13 +28,6 @@ export default function Conversion() {
       id="conversion"
       className="stage-conversion relative stage-pad-conversion"
     >
-      <Image
-        src="/images/bg/conversion_bg_1774213118297.png"
-        alt="Conversion Environment"
-        fill
-        className="object-cover -z-10 opacity-60"
-        loading="lazy"
-      />
       <div className="corridor-narrow align-center">
         {/* ── CTA Heading — bookend with REVELATION ── */}
         <h2 className="type-display mb-6 text-center">

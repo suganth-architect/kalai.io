@@ -1,18 +1,9 @@
-import Image from "next/image";
-
 export default function Proof() {
   return (
     <section
       id="proof"
       className="stage-proof relative stage-pad"
     >
-      <Image
-        src="/images/bg/proof_bg_1774213088407.png"
-        alt="Proof Environment"
-        fill
-        className="object-cover -z-10 opacity-60"
-        loading="lazy"
-      />
       {/* ── Section label — whisper-level ── */}
       <div className="corridor">
         <p className="type-micro uppercase tracking-widest text-tertiary mb-6">

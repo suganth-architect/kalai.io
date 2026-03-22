@@ -1,18 +1,9 @@
-import Image from "next/image";
-
 export default function Desire() {
   return (
     <section
       id="desire"
       className="stage-desire relative stage-pad"
     >
-      <Image
-        src="/images/bg/desire_bg_1774213103569.png"
-        alt="Desire Environment"
-        fill
-        className="object-cover -z-10 opacity-60"
-        loading="lazy"
-      />
       <div className="corridor">
         {/* ── Personal transformation statements ── */}
         <div className="mb-5">

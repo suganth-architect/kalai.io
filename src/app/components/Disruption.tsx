@@ -1,18 +1,9 @@
-import Image from "next/image";
-
 export default function Disruption() {
   return (
     <section
       id="disruption"
       className="stage-disruption relative stage-pad"
     >
-      <Image
-        src="/images/bg/disruption_bg_1774213058293.png"
-        alt="Disrupted Environment"
-        fill
-        className="object-cover -z-10 opacity-60"
-        loading="lazy"
-      />
       <div className="corridor">
         {/* ── Trigger 1: Loss Aversion ── */}
         <div className="mb-5">
