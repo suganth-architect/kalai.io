@@ -362,6 +362,26 @@ function proofMotion() {
       },
     });
   });
+
+  /* ── The ₹3.5L Metric Moment (Forced Attention) ── */
+  const metric = document.querySelector("#proof .metric-glow");
+  if (metric) {
+    gsap.fromTo(
+      metric,
+      { scale: 0.85, opacity: 0.4 },
+      {
+        scale: 1,
+        opacity: 1,
+        ease: EASE_DECEL,
+        scrollTrigger: {
+          trigger: metric,
+          start: "top 75%",
+          end: "top 45%",
+          scrub: true,
+        },
+      }
+    );
+  }
 }
 
 /* ════════════════════════════════════════════════════════════════

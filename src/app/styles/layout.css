@@ -13,6 +13,8 @@
   max-width: 680px;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+  z-index: 5;
 }
 
 .corridor-wide {
@@ -20,6 +22,8 @@
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+  z-index: 5;
 }
 
 .corridor-narrow {
@@ -27,6 +31,8 @@
   max-width: 480px;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+  z-index: 5;
 }
 
 /* ── Stage Sections ── */
@@ -485,10 +491,9 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 10;
+  z-index: 0;
   pointer-events: none;
   mix-blend-mode: screen; 
-  filter: drop-shadow(0 0 4px rgba(243, 156, 18, 0.35));
   will-change: opacity;
 }
 

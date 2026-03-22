@@ -189,6 +189,8 @@
 }
 
 .metric-value {
+  display: inline-block;
+  transform-origin: left center;
   color: var(--color-accent);
   font-weight: 500;
 }
