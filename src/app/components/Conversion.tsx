@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import MagneticButton from "./MagneticButton";
 
 export default function Conversion() {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,27 +37,31 @@ export default function Conversion() {
         </h2>
 
         {/* ── CTA Input — entry point, not a form ── */}
-        <form onSubmit={handleSubmit} className="mb-3">
-          <input
-            id="cta-email"
-            type="email"
-            name="email"
-            className="cta-input text-center"
-            placeholder="Enter email for early access"
-            required
-            autoComplete="email"
-            aria-label="Email address"
-            disabled={isLoading}
-          />
+        <form onSubmit={handleSubmit} className="mb-3 w-full max-w-sm mx-auto flex flex-col items-center">
+          <MagneticButton className="w-full">
+            <input
+              id="cta-email"
+              type="email"
+              name="email"
+              className="cta-input text-center w-full"
+              placeholder="Enter email for early access"
+              required
+              autoComplete="email"
+              aria-label="Email address"
+              disabled={isLoading}
+            />
+          </MagneticButton>
 
-          <button
-            id="cta-submit"
-            type="submit"
-            className={`cta-button mt-4${isLoading ? " is-loading" : ""}`}
-            disabled={isLoading}
-          >
-            {isLoading ? "Joining…" : "Coming Soon"}
-          </button>
+          <MagneticButton className="w-full mt-4">
+            <button
+              id="cta-submit"
+              type="submit"
+              className={`cta-button w-full${isLoading ? " is-loading" : ""}`}
+              disabled={isLoading}
+            >
+              {isLoading ? "Joining…" : "Coming Soon"}
+            </button>
+          </MagneticButton>
         </form>
 
         {/* ── Subdued Early Access Note ── */}

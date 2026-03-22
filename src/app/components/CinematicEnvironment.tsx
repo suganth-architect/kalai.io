@@ -5,9 +5,14 @@ import { Canvas } from "@react-three/fiber";
 import { Float, Environment } from "@react-three/drei";
 import { EffectComposer, Bloom, Noise, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
+import { useStageStore } from "../store/stageStore";
 import TheAgent from "./TheAgent";
+import WebGLGallery from "./WebGLGallery";
+import WebGLOptimizer from "./WebGLOptimizer";
 
 export default function CinematicEnvironment() {
+  const { fpsTier } = useStageStore();
+
   return (
     <div className="fixed inset-0 pointer-events-none -z-20 bg-black overflow-hidden">
       
@@ -32,7 +37,7 @@ export default function CinematicEnvironment() {
         className="absolute inset-0 z-10 w-full h-full"
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }} // Antialias false when using PostProcessing
-        dpr={[1, 2]}
+        dpr={fpsTier === "high" ? [1, 2] : 1} // Downgrades DPR to strict 1.0 bound on thermal/fps throttle
       >
         <ambientLight intensity={0.2} />
         
@@ -42,37 +47,22 @@ export default function CinematicEnvironment() {
         <directionalLight position={[5, 10, 5]} intensity={2.0} color="#ffffff" />
 
         <Suspense fallback={null}>
-          <Float speed={2} rotationIntensity={0.5} floatIntensity={1.0}>
-            <TheAgent />
-          </Float>
-          <Environment preset="night" background={false} />
+          <WebGLOptimizer>
+            <Float speed={2} rotationIntensity={0.5} floatIntensity={1.0}>
+              <TheAgent />
+            </Float>
+            {/* Dynamic 3D mapping of the 2D Poster Gallery */}
+            <WebGLGallery />
+            
+            <Environment preset="night" background={false} />
+          </WebGLOptimizer>
         </Suspense>
 
-        <EffectComposer disableNormalPass>
-          {/* Cinematic Bloom causing the entity to glow intensely against the void */}
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {React.createElement(Bloom as any, {
-            luminanceThreshold: 0.5,
-            luminanceSmoothing: 0.9,
-            intensity: 3.5,
-            mipmapBlur: true,
-            radius: 0.4
-          })}
-          {/* Gritty Film Grain to eliminate banding and add hyper-premium texture */}
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {React.createElement(Noise as any, {
-            opacity: 0.05,
-            premultiply: true,
-            blendFunction: BlendFunction.OVERLAY
-          })}
-          {/* Deep Vignette drawing the eye to the focal path of the agent */}
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {React.createElement(Vignette as any, {
-            eskil: false,
-            offset: 0.1,
-            darkness: 1.1,
-            blendFunction: BlendFunction.NORMAL
-          })}
+        {/* eslint-disable @typescript-eslint/no-explicit-any */}
+        <EffectComposer>
+          {fpsTier === "high" && (<Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={3.5} mipmapBlur radius={0.4} />) as any}
+          {(<Noise opacity={0.05} premultiply={true} blendFunction={BlendFunction.OVERLAY} />) as any}
+          {(<Vignette eskil={false} offset={0.1} darkness={1.1} blendFunction={BlendFunction.NORMAL} />) as any}
         </EffectComposer>
       </Canvas>
 

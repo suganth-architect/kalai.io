@@ -1,3 +1,5 @@
+import SplitTextReveal from "./SplitTextReveal";
+
 export default function Arrival() {
   return (
     <section
@@ -16,12 +18,12 @@ export default function Arrival() {
 
       {/* The corridor — center-aligned for ARRIVAL (exception) */}
       <div className="corridor align-center">
-        {/* The headline — already here. Waiting. Not performing. */}
+        {/* The headline — decoded dynamically with Matrix SplitTextReveal */}
         <h1 className="type-display">
-          Your work speaks for itself.
+          <SplitTextReveal text="Your work speaks for itself." />
           <br />
-          <span className="voice-aside">
-            But nobody can hear it.
+          <span className="voice-aside inline-block mt-2">
+            <SplitTextReveal text="But nobody can hear it." />
           </span>
         </h1>
 

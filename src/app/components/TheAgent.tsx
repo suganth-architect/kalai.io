@@ -12,7 +12,7 @@ export default function TheAgent() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const materialRef = useRef<any>(null);
   const scrollData = useRef({ progress: 0, velocity: 0 });
-  const { currentStage } = useStageStore();
+  const { currentStage, isTransitioning, isManualOverride, fpsTier } = useStageStore();
 
   useLenis((lenis) => {
     if (lenis) {
@@ -33,9 +33,23 @@ export default function TheAgent() {
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
+    
+    // OVERRIDE MODE: Immediate state hijack, detaching from linear timeline interpolation
+    if (isManualOverride) {
+      targetProps.current = {
+        x: 0, y: 0, z: -2,
+        scale: isMobile ? 1.5 : 2.5,
+        distort: 1.5, speed: 5.0, // Max disruption and churn
+        emissive: new THREE.Color("#ff2a00"), // Glitch red
+        color: new THREE.Color("#ffffff"),
+        intensity: 2.5
+      };
+      return; // Skip stage mapping
+    }
+
+    // STANDARD CHOREOGRAPHY 
     switch (currentStage) {
       case 1:
-        // Stage 1 (Arrival): Massive, perfectly centered, pulsing slowly. Low distortion.
         targetProps.current = {
           x: 0, y: 0, z: -3,
           scale: isMobile ? 1.5 : 2.5,
@@ -46,7 +60,6 @@ export default function TheAgent() {
         };
         break;
       case 2:
-        // Stage 2 (Disruption): Moves to the top-right corner. Chaotic spikes. Darker, aggressive tone.
         targetProps.current = {
           x: isMobile ? 1.0 : 3.0, y: isMobile ? 1.5 : 2.0, z: -4,
           scale: isMobile ? 1.0 : 1.4,
@@ -57,7 +70,6 @@ export default function TheAgent() {
         };
         break;
       case 3:
-        // Stage 3 (Revelation): Snaps back to center. Highly emissive, glass-like perfect sphere.
         targetProps.current = {
           x: 0, y: 0, z: -2,
           scale: isMobile ? 1.4 : 2.2,
@@ -68,7 +80,6 @@ export default function TheAgent() {
         };
         break;
       case 4:
-        // Stage 4 (Proof): Scales down and drops to bottom, dynamic light source.
         targetProps.current = {
           x: 0, y: -2.0, z: -2,
           scale: isMobile ? 0.8 : 1.2,
@@ -79,7 +90,6 @@ export default function TheAgent() {
         };
         break;
       case 5:
-        // Stage 5 (Desire): Soft peripheral drift.
         targetProps.current = {
           x: isMobile ? -1.0 : -2.5, y: 0, z: -4,
           scale: 1.6,
@@ -90,7 +100,6 @@ export default function TheAgent() {
         };
         break;
       case 6:
-        // Stage 6 (Conversion): Expands massively to engulf the background behind the input field.
         targetProps.current = {
           x: 0, y: 0, z: -1,
           scale: isMobile ? 3.5 : 5.5,
@@ -101,7 +110,7 @@ export default function TheAgent() {
         };
         break;
       case 7:
-        // Ecosystem baseline
+      default:
         targetProps.current = {
           x: 0, y: 0, z: -5,
           scale: 2.0,
@@ -112,37 +121,50 @@ export default function TheAgent() {
         };
         break;
     }
-  }, [currentStage]);
+  }, [currentStage, isManualOverride]);
 
   useFrame((state, delta) => {
     if (!meshRef.current || !materialRef.current) return;
     
     const tg = targetProps.current;
     
-    // Velocity tracking for additional chaotic shear during fast scrolling
-    const targetVelocity = Math.abs(scrollData.current.velocity);
-    const velMap = Math.min(targetVelocity * 0.05, 1.2);
+    // Position Damping & Calculations
+    if (isManualOverride) {
+      // 100% Sandbox tracking to cursor bounds mapped to viewport sizes
+      const pointerX = state.pointer.x * 5.0;
+      const pointerY = state.pointer.y * 5.0;
+      meshRef.current.position.x = THREE.MathUtils.damp(meshRef.current.position.x, pointerX, 4, delta);
+      meshRef.current.position.y = THREE.MathUtils.damp(meshRef.current.position.y, pointerY, 4, delta);
+      meshRef.current.position.z = THREE.MathUtils.damp(meshRef.current.position.z, tg.z, 2.5, delta);
+    } else {
+      // Standard interpolation
+      meshRef.current.position.x = THREE.MathUtils.damp(meshRef.current.position.x, tg.x, 2.5, delta);
+      meshRef.current.position.y = THREE.MathUtils.damp(meshRef.current.position.y, tg.y, 2.5, delta);
+      meshRef.current.position.z = THREE.MathUtils.damp(meshRef.current.position.z, tg.z, 2.5, delta);
+    }
 
-    // Position Damping
-    meshRef.current.position.x = THREE.MathUtils.damp(meshRef.current.position.x, tg.x, 2.5, delta);
-    meshRef.current.position.y = THREE.MathUtils.damp(meshRef.current.position.y, tg.y, 2.5, delta);
-    meshRef.current.position.z = THREE.MathUtils.damp(meshRef.current.position.z, tg.z, 2.5, delta);
-
-    // Scale calculation (includes mouse proximity pulsing in stage 6)
-    let finalScale = tg.scale;
-    if (currentStage === 6) {
-      // Calculate cursor distance from center
+    // Scale calculation (Transition envelope override > Stage 6 pulse > Default)
+    let targetScale = tg.scale;
+    if (isTransitioning) {
+      targetScale = 50.0; // Envelopes the camera entirely cutting off navigation seamlessly
+    } else if (!isManualOverride && currentStage === 6) {
       const dist = Math.sqrt(state.pointer.x ** 2 + state.pointer.y ** 2);
       const pulse = Math.sin(state.clock.elapsedTime * 1.5) * 0.15;
-      finalScale += pulse + (Math.max(0, 1.5 - dist) * 0.4); // Inflates as mouse nears center
+      targetScale += pulse + (Math.max(0, 1.5 - dist) * 0.4); 
     }
-    meshRef.current.scale.setScalar(THREE.MathUtils.damp(meshRef.current.scale.x, finalScale, 3, delta));
+    
+    // Scale snap speed changes dramatically if acting as a routing transition
+    const scaleDampSpeed = isTransitioning ? 5.0 : 3.0;
+    meshRef.current.scale.setScalar(THREE.MathUtils.damp(meshRef.current.scale.x, targetScale, scaleDampSpeed, delta));
 
-    // Dynamic Morphing & Rotation
+    // Dynamic Morphing & Rotation (add chaotic scroll shear if NOT manual override)
+    const targetVelocity = Math.abs(scrollData.current.velocity);
+    const velMap = isManualOverride ? 0 : Math.min(targetVelocity * 0.05, 1.2);
+
     materialRef.current.distort = THREE.MathUtils.damp(materialRef.current.distort, tg.distort + velMap, 3, delta);
     materialRef.current.speed = THREE.MathUtils.damp(materialRef.current.speed, tg.speed + velMap * 1.5, 3, delta);
 
-    // Color Lerping
+    // Color Lerping seamlessly globally
     materialRef.current.emissive.lerp(tg.emissive, 0.05);
     materialRef.current.color.lerp(tg.color, 0.05);
     materialRef.current.emissiveIntensity = THREE.MathUtils.damp(materialRef.current.emissiveIntensity, tg.intensity, 2, delta);
@@ -158,7 +180,12 @@ export default function TheAgent() {
     <group>
         {/* Core Fluid Entity */}
         <mesh ref={meshRef}>
-            <icosahedronGeometry args={[1, 128]} />
+            {/* Dynamically slice segment count if parsing drops, ensuring 60fps locking on potato devices */}
+            {fpsTier === "high" ? (
+              <icosahedronGeometry args={[1, 128]} />
+            ) : (
+               <icosahedronGeometry args={[1, 64]} />
+            )}
             <MeshDistortMaterial
                 ref={materialRef}
                 color="#ffffff"

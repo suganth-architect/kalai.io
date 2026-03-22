@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import TransitionRouter from "./TransitionRouter";
 
 export default function Ecosystem() {
   const products = [
@@ -26,7 +27,7 @@ export default function Ecosystem() {
     },
   ];
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -46,14 +47,15 @@ export default function Ecosystem() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 mt-6 relative z-20">
           {products.map((product) => (
-            <a
+            <TransitionRouter
               key={product.name}
               href={product.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative rounded-2xl bg-white/5 backdrop-blur-2xl p-8 overflow-hidden transition-transform duration-500 hover:scale-[1.01]"
-              onMouseMove={handleMouseMove}
+              className="group relative block rounded-2xl bg-white/5 backdrop-blur-2xl p-8 overflow-hidden transition-transform duration-500 hover:scale-[1.01]"
+              onClick={() => {}} // Additional click logic triggers could go here
             >
+              {/* Event handler bubbling listener element wrapper */}
+              <div className="absolute inset-0 z-50 pointer-events-auto" onMouseMove={handleMouseMove} />
+              
               {/* Dynamic Glow */}
               <div 
                 className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -74,11 +76,11 @@ export default function Ecosystem() {
                 }} 
               />
               
-              <div className="relative z-20">
+              <div className="relative z-20 pointer-events-none">
                 <h3 className="text-xl md:text-2xl font-medium text-white mb-2 tracking-tight group-hover:text-white transition-colors">{product.name}</h3>
                 <p className="text-white/50 text-sm md:text-base leading-relaxed tracking-wide">{product.desc}</p>
               </div>
-            </a>
+            </TransitionRouter>
           ))}
         </div>
       </div>

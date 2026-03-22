@@ -48,49 +48,33 @@ export default function Proof() {
         </div>
       </div>
 
-      {/* ── Artifact 2: Instagram Feed Grid ── */}
-      <div className="corridor-wide artifact-gap">
-        <div className="poster-gallery">
-          <div className="poster-item">
-            <Image 
-              src="/images/posters/poster-1.png" 
-              alt="Interior Mood Poster" 
-              width={600} 
-              height={750} 
-              quality={90}
-              className="poster-img"
-            />
-          </div>
-          <div className="poster-item">
-            <Image 
-              src="/images/posters/poster-2.png" 
-              alt="Light and Shadow Poster" 
-              width={600} 
-              height={750} 
-              quality={90}
-              className="poster-img"
-            />
-          </div>
-          <div className="poster-item">
-            <Image 
-              src="/images/posters/poster-3.png" 
-              alt="Modern Staircase Poster" 
-              width={600} 
-              height={750} 
-              quality={90}
-              className="poster-img"
-            />
-          </div>
-          <div className="poster-item">
-            <Image 
-              src="/images/posters/poster-4.png" 
-              alt="Villa Twilight Poster" 
-              width={600} 
-              height={750} 
-              quality={90}
-              className="poster-img"
-            />
-          </div>
+      {/* ── Artifact 2: WebGL Museum Matrix ── */}
+      {/* 
+         The actual images are rendered in WebGLGallery.tsx 
+         These are purely structural placeholders for scroll positioning & intersection tracking 
+      */}
+      <div className="corridor-wide artifact-gap relative z-0">
+        <div className="poster-gallery grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div 
+            id="gallery-poster-1" 
+            className="poster-item w-full relative" 
+            style={{ aspectRatio: '4/5' }} 
+          />
+          <div 
+            id="gallery-poster-2" 
+            className="poster-item w-full relative pt-4 md:pt-12" 
+            style={{ aspectRatio: '4/5' }} 
+          />
+          <div 
+            id="gallery-poster-3" 
+            className="poster-item w-full relative pt-2 md:pt-6" 
+            style={{ aspectRatio: '4/5' }} 
+          />
+          <div 
+            id="gallery-poster-4" 
+            className="poster-item w-full relative pt-6 md:pt-16" 
+            style={{ aspectRatio: '4/5' }} 
+          />
         </div>
 
         <div className="feed-caption align-center mt-4">
