@@ -19,7 +19,7 @@ export default function Ecosystem() {
     },
     {
       name: "RenderDrop",
-      url: "https://renderdrop.com",
+      url: "https://renderdrop.in",
       desc: "High-quality architectural visualizations, delivered fast.",
     },
   ];
