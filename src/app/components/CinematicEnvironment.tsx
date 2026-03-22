@@ -1,85 +1,63 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useLenis } from "lenis/react";
 import Image from "next/image";
 
 export default function CinematicEnvironment() {
-  const bg1 = useRef<HTMLDivElement>(null);
-  const bg2 = useRef<HTMLDivElement>(null);
-  const bg3 = useRef<HTMLDivElement>(null);
-  
-  const scrollProgress = useRef<number>(0);
-  const rafId = useRef<number>(0);
-
-  useLenis((lenis) => {
-    if (lenis) {
-      scrollProgress.current = lenis.progress ?? 0;
-    }
-  });
-
-  useEffect(() => {
-    const tick = () => {
-      const p = scrollProgress.current;
-      
-      // Update Opacities smoothly with requestAnimationFrame rather than react state
-      if (bg1.current) {
-        const op = Math.max(0, 1 - p * 3); // Fades out by 0.33
-        bg1.current.style.opacity = op.toString();
-        bg1.current.style.transform = `scale(${1 + p * 0.1})`; // slight zoom
-      }
-      
-      if (bg2.current) {
-        let op = 0;
-        if (p >= 0.15 && p < 0.4) op = (p - 0.15) * 4; // fade in
-        else if (p >= 0.4 && p < 0.7) op = 1; // hold
-        else if (p >= 0.7) op = Math.max(0, 1 - (p - 0.7) * 4); // fade out
-        bg2.current.style.opacity = op.toString();
-        bg2.current.style.transform = `scale(${1 + Math.max(0, p - 0.15) * 0.1})`;
-      }
-      
-      if (bg3.current) {
-        let op = 0;
-        if (p >= 0.6) op = Math.min(1, (p - 0.6) * 3); // fade in
-        bg3.current.style.opacity = op.toString();
-        bg3.current.style.transform = `scale(${1 + Math.max(0, p - 0.6) * 0.1})`;
-      }
-
-      rafId.current = requestAnimationFrame(tick);
-    };
-
-    rafId.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId.current);
-  }, []);
-
   return (
     <div className="fixed inset-0 pointer-events-none -z-20 bg-black overflow-hidden">
       
       {/* 
-        To fix pixelation of scaled AI background images, we apply a Depth-of-Field blur 
-        to soften the resolution and scale it slightly to hide blurred edges.
+        Fallback Cinematic Minimal Image
+        This sits underneath the video in case the video hasn't loaded or isn't placed yet.
+        It slowly scales and translates to provide motion.
       */}
-      <div className="absolute inset-0 scale-105 blur-[10px]">
-        <div ref={bg1} className="absolute inset-0 will-change-transform opacity-100">
-          <Image src="/images/bg/environment_1_arrival_1774214165077.png" alt="Arrival Environment" fill className="object-cover opacity-80" quality={100} unoptimized priority />
-        </div>
-        <div ref={bg2} className="absolute inset-0 will-change-transform opacity-0">
-          <Image src="/images/bg/environment_2_disruption_1774214181037.png" alt="Disruption Environment" fill className="object-cover opacity-80" quality={100} unoptimized />
-        </div>
-        <div ref={bg3} className="absolute inset-0 will-change-transform opacity-0">
-          <Image src="/images/bg/environment_3_resolution_1774214197078.png" alt="Resolution Environment" fill className="object-cover opacity-80" quality={100} unoptimized />
-        </div>
+      <div 
+        className="absolute inset-[-10%] opacity-80 will-change-transform"
+        style={{
+          animation: "cinematic-pan 120s ease-in-out infinite alternate"
+        }}
+      >
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes cinematic-pan {
+            0% { transform: scale(1.0) translate(0%, 0%); }
+            50% { transform: scale(1.1) translate(-2%, 1%); }
+            100% { transform: scale(1.05) translate(1%, -1%); }
+          }
+        `}} />
+        <Image 
+          src="/videos/veo_fallback.png" 
+          alt="Atmospheric Fallback Environment" 
+          fill 
+          className="object-cover" 
+          quality={100} 
+          unoptimized 
+          priority 
+        />
       </div>
 
-      {/* Cinematic Vignette to merge harsh edges into the void */}
+      {/* 
+        Primary Dedicated Video Background (Designed for Google Veo / Luma Dream Machine loops)
+        Expects a single seamlessly looping, cinematic .mp4 located at /videos/bg.mp4
+      */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-80"
+      >
+        <source src="/videos/bg.mp4" type="video/mp4" />
+      </video>
+
+      {/* Cinematic Vignette to merge harsh edges into the void and center focus */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.95)_100%)]" />
 
       {/* 
         High-Frequency SVG Noise Overlay 
-        This is the ultimate fix for low-res pixelation banding. 
-        It injects true pixel-level detail over the blurred background, making it look incredibly high-end.
+        Critically important for video backgrounds: Mends heavy MP4 compression banding 
+        and permanently unifies the environment texture.
       */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.15] mix-blend-screen pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+      <svg className="absolute inset-0 w-full h-full opacity-[0.25] mix-blend-screen pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <filter id="cinematic-noise">
           <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
         </filter>
