@@ -35,10 +35,6 @@ function stageProgress(scroll: number, stage: keyof typeof STAGES): number {
   return clamp01((scroll - s.start) / (s.end - s.start));
 }
 
-function wobble(t: number, freq: number, amp: number): number {
-  return Math.sin(t * freq) * amp + Math.sin(t * freq * 1.7 + 0.5) * amp * 0.4;
-}
-
 export default function Thread() {
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRefs = useRef<SVGPathElement[]>([]);
@@ -72,15 +68,17 @@ export default function Thread() {
   /* ── Build SVG paths for each stage ── */
 
   const buildArrival = useCallback(
-    (t: number, vw: number, vh: number): ThreadFrame => {
+    (t: number, vw: number, vh: number, vMag: number): ThreadFrame => {
       const y = vh * 0.85;
       const cx = vw / 2;
       const halfW = vw * 0.2;
       
-      const breathe = Math.sin(t * 0.785) * 0.03;
-      const opacity = 0.25 + breathe;
-      const sw = 1.2 + Math.sin(t * 0.8) * 0.3; // Very slight
-      const curve = Math.sin(t * 0.5) * 5; // Minimal bend
+      const breathe = Math.sin(t * 0.5) * 0.05; // Gentle breathing idle
+      const opacity = clamp01(0.85 + breathe); 
+      const sw = 1.5; 
+      
+      // Amplified strictly by scroll (vMag)
+      const curve = Math.sin(t * 0.8) * (3 + vMag * 15); 
       const path = `M${cx - halfW},${y} Q${cx},${y + curve} ${cx + halfW},${y}`;
       return { paths: [path], opacities: [opacity], strokeWidths: [sw] };
     },
@@ -92,24 +90,20 @@ export default function Thread() {
       const cx = vw / 2;
       const baseY = vh * 0.5;
       const halfW = vw * 0.15;
-      const separation = progress * 8;
+      const separation = progress * 15; // Smooth divergence, no aggressive jitter
 
       const paths: string[] = [];
       const opacities: number[] = [];
       const strokeWidths: number[] = [];
 
       for (let i = 0; i < 3; i++) {
-        const yOffset = (i - 1) * separation * (2 + Math.sin(t * (1.2 + i * 0.3)) * 0.8);
+        const yOffset = (i - 1) * separation;
         
-        // Intensity scales heavily with scroll speed (Motion Intelligence)
-        const jitterX = wobble(t + i * 2.1, 4.5 + i * 0.7, 1.0 + vMag * 15.0); 
+        // Smooth organic shifting that amplifies sharply on scroll
+        const jitterX = Math.sin(t * (0.8 + i * 0.6)) * (4 + vMag * 12);
         
-        const flicker = Math.sin(t * (4.8 + i * 1.9) + i * 1.3);
-        // Harsh bursts tied to scroll / flicker
-        const sharpFlicker = flicker > 0.8 ? 0.9 + vMag * 0.3 : (0.05 + 0.1 * flicker + vMag * 0.1); 
-        
-        const opacity = sharpFlicker;
-        const sw = 1.0 + Math.sin(t * (2.6 + i * 0.2)) * (0.5 + vMag * 2); 
+        const opacity = 0.85; 
+        const sw = 1.5;
         
         const x1 = cx - halfW + jitterX;
         const x2 = cx + halfW + jitterX * 0.7;
@@ -127,31 +121,28 @@ export default function Thread() {
   );
 
   const buildRevelation = useCallback(
-    (t: number, progress: number, vw: number, vh: number): ThreadFrame => {
+    (t: number, progress: number, vw: number, vh: number, vMag: number): ThreadFrame => {
       const isMobile = vw < 768;
       const x = isMobile ? vw * 0.08 : vw * 0.382;
       
-      const coalesceT = clamp01(progress / 0.15);
-      const drawT = clamp01((progress - 0.15) / 0.85); // draws entire path
+      const drawT = clamp01((progress - 0.15) / 0.85); 
       
       // Revelation delayed reveal trigger is at section scroll 65% to 55%.
-      // progress through the revelation STAGE roughly maps. We create an activation peak at ~0.35.
-      const activation = clamp01(1 - Math.abs(progress - 0.35) / 0.08); // very sharp peak
-      const snapToStraight = activation;
+      const snapToStraight = clamp01(1 - Math.abs(progress - 0.35) / 0.08); 
       
-      const opacity = lerp(0.20, 0.70, coalesceT) + activation * 0.8;
+      const opacity = lerp(0.85, 0.95, snapToStraight);
       
       const startY = vh * 0.15;
       const endY = lerp(startY + 10, vh * 0.90, drawT);
       
-      const microWave = Math.sin(t * 0.3) * 0.5 * (1 - snapToStraight);
-      const sw = lerp(1.5, 2.5, drawT) + activation * 3.5; // massive flash thicker
+      const microWave = Math.sin(t * 0.5) * (1 + vMag * 3) * (1 - snapToStraight);
+      const sw = 1.5; 
       
       const endX = x - microWave * 0.5;
       
-      // when activation approaches 1, curve collapses to straight line exactly
-      const curveX = lerp(x + Math.sin(t * 0.6) * 20, x, snapToStraight); 
-      const curveCtrlBotX = lerp(x - Math.sin(t * 0.4) * 15, x, snapToStraight);
+      // When activation approaches 1, precisely straightens.
+      const curveX = lerp(x + Math.sin(t * 0.7) * (8 + vMag * 8), x, snapToStraight); 
+      const curveCtrlBotX = lerp(x - Math.sin(t * 0.5) * (8 + vMag * 8), x, snapToStraight);
       
       const path = `M${x + microWave},${startY} C${curveX},${startY + 50} ${curveCtrlBotX},${endY - 50} ${endX},${endY}`;
 
@@ -172,14 +163,14 @@ export default function Thread() {
       const opacities: number[] = [];
       const strokeWidths: number[] = [];
 
-      // Main vertical line — stable, calm, guiding intelligence
-      const ctrlX1 = x + Math.sin(t * 0.4) * (2 + vMag * 10);
-      const ctrlX2 = x - Math.sin(t * 0.5) * (2 + vMag * 10);
+      // Main line: smooth gentle C curve, responds clearly to movement
+      const ctrlX1 = x + Math.sin(t * 0.6) * (3 + vMag * 10);
+      const ctrlX2 = x - Math.sin(t * 0.8) * (3 + vMag * 10);
       paths.push(`M${x},${vh * 0.05} C${ctrlX1},${vh * 0.3} ${ctrlX2},${vh * 0.7} ${x},${vh * 0.95}`);
-      opacities.push(0.35); /* Soft, stable opacity */
-      strokeWidths.push(1.5 + Math.sin(t * 0.8) * 0.2); 
+      opacities.push(0.9); 
+      strokeWidths.push(1.5); 
 
-      // Branches pointing exactly elements
+      // Structural branches pinning the cards visually
       const branchYPositions = [0.25, 0.50, 0.75];
       const branchLength = isMobile ? 25 : 45;
 
@@ -191,12 +182,11 @@ export default function Thread() {
         if (branchProgress > 0) {
           const by = vh * yRatio;
           const bxEnd = x + branchLength * branchProgress;
-          // Calm curve pointing
-          const bCtrlY = by + Math.sin(t * (0.8 + i * 0.3)) * (2 + vMag * 5);
+          const bCtrlY = by + Math.sin(t * (1.0 + i * 0.4)) * (2 + vMag * 4);
           paths.push(`M${x},${by} Q${x + 10},${bCtrlY} ${bxEnd},${by}`);
           
-          opacities.push(lerp(0, 0.25, branchProgress) * (1 - branchEnd * 0.6));
-          strokeWidths.push(1.0 + Math.sin(t * (0.5 + i * 0.2)) * 0.1);
+          opacities.push(lerp(0, 0.85, branchProgress) * (1 - branchEnd * 0.6));
+          strokeWidths.push(1.5);
         }
       });
 
@@ -211,11 +201,10 @@ export default function Thread() {
       const x = isMobile ? vw * 0.08 : vw * 0.382;
       const waveFreq = (2 * Math.PI) / 200;
       
-      const dampProgress = clamp01(progress / 0.3);
       const dampen = 1 - clamp01((progress - 0.8) / 0.2);
       
-      // Transition = strong movement. Idle = smooth, flowing.
-      const amplitude = lerp(0, 15 + vMag * 25, dampProgress);
+      // Transition = amplified movement. Idle = smooth flowing.
+      const amplitude = lerp(4, 12 + vMag * 20, clamp01(progress / 0.3));
 
       let path = "";
       const segments = 40;
@@ -224,13 +213,13 @@ export default function Thread() {
       for (let i = 0; i <= segments; i++) {
         const y = i * segHeight;
         const wave = Math.sin(y * waveFreq + t * 1.5) * amplitude * dampen;
-        const micro = Math.sin(y * 0.05 + t * 0.7) * (0.8 + vMag * 2);
+        const micro = Math.sin(y * 0.05 + t * 0.8) * (1 + vMag * 3);
         const px = x + wave + micro;
         path += i === 0 ? `M${px},${y}` : ` L${px},${y}`;
       }
 
-      const opacity = 0.40 + Math.sin(t * 0.5) * 0.05;
-      const sw = 1.4 + Math.sin(t * 0.3) * 0.15;
+      const opacity = 0.9;
+      const sw = 1.5;
       return { paths: [path], opacities: [opacity], strokeWidths: [sw] };
     },
     []
@@ -248,9 +237,8 @@ export default function Thread() {
       
       const termProgress = progress > 0.5 ? clamp01((progress - 0.5) / 0.3) : 0;
       
-      // Stop moving completely -> residual dampens to 0 as it resolves
       const movingFactor = 1 - termProgress;
-      const residual = (1 - straighten) * (3 + vMag * 10) * movingFactor;
+      const residual = (1 - straighten) * (3 + vMag * 8) * movingFactor;
 
       let path = "";
       const segments = 30;
@@ -259,7 +247,7 @@ export default function Thread() {
       for (let i = 0; i <= segments; i++) {
         const ratio = i / segments;
         const y = i * segHeight;
-        const wave = Math.sin(y * 0.03 + t * 0.8) * residual;
+        const wave = Math.sin(y * 0.03 + t * 1.2) * residual;
         const px = lerp(topX + wave, ctaX, ratio * straighten);
         path += i === 0 ? `M${px},${y}` : ` L${px},${y}`;
       }
@@ -269,10 +257,10 @@ export default function Thread() {
         path = path.replace(/L[^L]*$/, `L${ctaX},${termY}`);
       }
 
-      // subtle pulse at terminal
-      const pulseTension = termProgress > 0.95 ? Math.sin(t * 3.0) * 0.2 : 0;
-      const opacity = termProgress > 0.9 ? 0.6 + pulseTension : 0.45;
-      const sw = 1.6 + pulseTension * 2;
+      // Subtle pulse to indicate system readiness
+      const pulseTension = termProgress > 0.95 ? Math.sin(t * 1.5) * 0.05 : 0;
+      const opacity = 0.9 + pulseTension;
+      const sw = 1.5;
       
       return { paths: [path], opacities: [opacity], strokeWidths: [sw] };
     },
@@ -296,13 +284,16 @@ export default function Thread() {
 
       frame.paths.forEach((d, i) => {
         if (paths[i] && glowPs[i]) {
+          // Inner Core: Sharp, ~0.9 opacity, ~1.5px thickness
           paths[i].setAttribute("d", d);
-          paths[i].style.opacity = String(frame.opacities[i]);
+          paths[i].style.opacity = String(Math.max(0.3, frame.opacities[i])); // Never drops below 0.3
           paths[i].style.strokeWidth = String(frame.strokeWidths[i]);
           
+          // Outer Glow: Soft, ~0.15-0.25 opacity, ~3.5px thickness, blur(1.5px)
+          const glowOpacity = Math.max(0.15, frame.opacities[i] * 0.25);
           glowPs[i].setAttribute("d", d);
-          glowPs[i].style.opacity = String(frame.opacities[i] * 0.3);
-          glowPs[i].style.strokeWidth = String(frame.strokeWidths[i] * 4);
+          glowPs[i].style.opacity = String(glowOpacity);
+          glowPs[i].style.strokeWidth = "3.5";
         }
       });
 
@@ -331,12 +322,13 @@ export default function Thread() {
       smoothVelocity.current = lerp(smoothVelocity.current, Math.abs(velocity.current), 0.1);
       const vMag = clamp01(smoothVelocity.current / 50);
 
+      // Thread must NEVER become completely static. Small base multiplier enforces constant life.
       if (prefersReducedMotion.current) {
         const x = vw < 768 ? vw * 0.08 : vw * 0.382;
         updateFrame({
           paths: [`M${x},${vh * 0.1} L${x},${vh * 0.9}`],
-          opacities: [0.25],
-          strokeWidths: [1.2],
+          opacities: [0.85],
+          strokeWidths: [1.5],
         });
         rafId.current = requestAnimationFrame(tick);
         return;
@@ -347,13 +339,13 @@ export default function Thread() {
 
       switch (stage) {
         case "arrival":
-          frame = buildArrival(t, vw, vh);
+          frame = buildArrival(t, vw, vh, vMag);
           break;
         case "disruption":
-          frame = buildDisruption(t, stageProgress(scroll, "disruption"), vw, vh, vMag);
+          frame = buildDisruption(t, Math.max(0.01, stageProgress(scroll, "disruption")), vw, vh, vMag);
           break;
         case "revelation":
-          frame = buildRevelation(t, stageProgress(scroll, "revelation"), vw, vh);
+          frame = buildRevelation(t, stageProgress(scroll, "revelation"), vw, vh, vMag);
           break;
         case "proof":
           frame = buildProof(t, stageProgress(scroll, "proof"), vw, vh, vMag);
@@ -369,7 +361,7 @@ export default function Thread() {
       updateFrame(frame);
 
       if (scroll > 0.97) {
-        svg.style.opacity = String(1 - clamp01((scroll - 0.97) / 0.03));
+        svg.style.opacity = String(Math.max(0.3, 1 - clamp01((scroll - 0.97) / 0.03)));
       } else {
         svg.style.opacity = "1";
       }
@@ -414,7 +406,7 @@ export default function Thread() {
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Glow layer first so it draws under the core mathematically, but filter also diffuses */}
+      {/* Outer Glow Layer */}
       {Array.from({ length: 6 }).map((_, i) => (
         <path
           key={`glow-${i}`}
@@ -424,11 +416,11 @@ export default function Thread() {
           stroke="var(--color-accent)"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ filter: "blur(6px)" }}
+          style={{ filter: "blur(1.5px)" }}
         />
       ))}
       
-      {/* Core layer */}
+      {/* Inner Core Layer */}
       {Array.from({ length: 6 }).map((_, i) => (
         <path
           key={`core-${i}`}
