@@ -15,14 +15,13 @@ interface SplitTextProps {
 
 export default function SplitTextReveal({ text, className = "" }: SplitTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const charsRef = useRef<(HTMLSpanElement | null)[]>([]);
   const words = text.split(" ");
   const { triggerSFX } = useStageStore();
   
   useGSAP(() => {
-    if (!containerRef.current) return;
-    
-    // We only trigger when the user actually scolls that element into the viewport center
-    const chars = containerRef.current.querySelectorAll(".matrix-char");
+    const chars = charsRef.current.filter((el): el is HTMLSpanElement => el !== null);
+    if (!containerRef.current || chars.length === 0) return;
     
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -69,19 +68,28 @@ export default function SplitTextReveal({ text, className = "" }: SplitTextProps
     });
   }, { scope: containerRef });
 
+  // Helper calculation for global char index within mapped nested loops
+  let globalCharIdx = 0;
+
   return (
     <div ref={containerRef} className={`inline-flex flex-wrap ${className}`}>
       {words.map((word, wIdx) => (
         <span key={wIdx} className="inline-flex mr-[0.25em] whitespace-pre">
-          {word.split("").map((char, cIdx) => (
-            <span 
-               key={cIdx} 
-               className="matrix-char inline-block" 
-               data-char={char} // Store original character
-            >
-              {char}
-            </span>
-          ))}
+          {word.split("").map((char, cIdx) => {
+            const currentIdx = globalCharIdx++;
+            return (
+              <span 
+                 key={cIdx}
+                 ref={(el) => {
+                   charsRef.current[currentIdx] = el;
+                 }}
+                 className="matrix-char inline-block" 
+                 data-char={char} // Store original character
+              >
+                {char}
+              </span>
+            );
+          })}
         </span>
       ))}
     </div>

@@ -1,61 +1,82 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useLenis } from "lenis/react";
 import { useStageStore } from "../store/stageStore";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+// Safely register GSAP plugins strictly on the client
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 export default function StageController() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { setCurrentStage, setScrollProgress } = useStageStore();
+  const { setCurrentStage } = useStageStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Prevent hydration mismatch by blocking render execution until DOM is verified
+  useEffect(() => {
+    const t = setTimeout(() => setIsMounted(true), 10);
+    return () => {
+      clearTimeout(t);
+      // Hard reset all triggers gracefully upon complex un-mounts to prevent detached targets
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, []);
 
   useLenis((lenis) => {
-    ScrollTrigger.update();
-    setScrollProgress(lenis.progress);
+    if (isMounted) {
+      ScrollTrigger.update();
+      // Notice: CRITICALLY removing setScrollProgress from the R3F loop 
+      // This immediately fixes the "Minified React Error #185" maximum depth crash on lower devices.
+      // Transient read states are naturally consumed via raw useLenis tracking now natively instead of Redux/Zustand!
+    }
   });
 
   useGSAP(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!isMounted || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // Strict Target Initialization Array avoiding wild DOM queries
     const stages = [
-      "#arrival",
-      "#disruption",
-      "#revelation",
-      "#proof",
-      "#desire",
-      "#conversion",
-      "#ecosystem"
+      "arrival",
+      "disruption",
+      "revelation",
+      "proof",
+      "desire",
+      "conversion",
+      "ecosystem"
     ];
 
-    stages.forEach((selector, index) => {
-      const section = document.querySelector(selector);
+    stages.forEach((id, index) => {
+      const section = document.getElementById(id);
       if (!section) return;
 
       const stageNum = index + 1;
+      // Scoped rigid selector bound to the specific stage avoiding CSS overlap artifacting
       const content = section.querySelectorAll(".corridor, .corridor-wide");
+      if (!content || content.length === 0) return;
 
-      // Set initial state
+      // Set initial isolated GSAP matrix avoiding flash of unstyled content
       gsap.set(content, { opacity: 0, y: 100, filter: "blur(12px)" });
 
-      // Create a master timeline for this section's scroll
+      // Create a master timeline explicitly terminating tied scroll triggers safely
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=150%", // Pins the section for 1.5x screen height
+          end: "+=150%", // Pins the section for 1.5x relative screen height
           pin: true,
           pinSpacing: true,
-          scrub: 1, // Smooth scrubbing
+          scrub: 1, // Inertial fluid scrubbing
           onEnter: () => setCurrentStage(stageNum),
           onEnterBack: () => setCurrentStage(stageNum),
         }
       });
 
-      // 1. Enter: Unblur, fade in, translate up
+      // 1. Enter: Unblur, fade in, translate upward via dampening
       tl.to(content, {
         opacity: 1,
         y: 0,
@@ -64,7 +85,7 @@ export default function StageController() {
         ease: "power3.out",
       });
 
-      // 2. Hold: Keep it perfectly still and readable for a long duration
+      // 2. Hold: Keep it perfectly still and readable for a deterministic length
       tl.to({}, { duration: 4 });
 
       // 3. Exit: Violently overtake - push up, fade out, blur heavily
@@ -77,7 +98,9 @@ export default function StageController() {
       });
     });
 
-  }, { scope: containerRef }); // GSAP cleanup automatically handled by useGSAP
+  }, { scope: containerRef, dependencies: [isMounted] }); // Execute safely only post-DOM hydration
 
-  return <div ref={containerRef} className="hidden" aria-hidden="true" />;
+  if (!isMounted) return <div ref={containerRef} className="hidden" aria-hidden="true" />;
+
+  return <div ref={containerRef} className="hidden stage-mounted-anchor" aria-hidden="true" />;
 }

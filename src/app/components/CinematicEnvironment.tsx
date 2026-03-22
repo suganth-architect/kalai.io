@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Float, Environment } from "@react-three/drei";
 import { EffectComposer, Bloom, Noise, Vignette } from "@react-three/postprocessing";
@@ -12,6 +12,14 @@ import WebGLOptimizer from "./WebGLOptimizer";
 
 export default function CinematicEnvironment() {
   const { fpsTier } = useStageStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsMounted(true), 10);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!isMounted) return <div className="fixed inset-0 pointer-events-none -z-20 bg-black overflow-hidden" />;
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-20 bg-black overflow-hidden">
