@@ -424,7 +424,7 @@ export default function Thread() {
         <path
           key={`core-${i}`}
           ref={setPathRef(i)}
-          className="thread-line mix-blend-screen"
+          className="thread-line"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"

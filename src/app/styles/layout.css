@@ -38,27 +38,27 @@
 /* ── Stage Sections ── */
 
 .stage-arrival {
-  background-color: var(--color-stage-arrival);
+  background-color: transparent;
 }
 
 .stage-disruption {
-  background-color: var(--color-stage-disruption);
+  background-color: transparent;
 }
 
 .stage-revelation {
-  background-color: var(--color-stage-revelation);
+  background-color: transparent;
 }
 
 .stage-proof {
-  background-color: var(--color-stage-proof);
+  background-color: transparent;
 }
 
 .stage-desire {
-  background-color: var(--color-stage-desire);
+  background-color: transparent;
 }
 
 .stage-conversion {
-  background-color: var(--color-stage-conversion);
+  background-color: transparent;
 }
 
 /* ── Stage Spacing ── */
