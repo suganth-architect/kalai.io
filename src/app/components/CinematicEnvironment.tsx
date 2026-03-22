@@ -36,18 +36,21 @@ export default function CinematicEnvironment() {
       </div>
 
       {/* 
-        Primary Dedicated Video Background (Designed for Google Veo / Luma Dream Machine loops)
-        Expects a single seamlessly looping, cinematic .mp4 located at /videos/bg.mp4
+        Primary Dedicated Video Background (Google Veo Loop)
+        - scale-[1.15] forces a mechanical zoom to perfectly crop out the Veo watermark (bottom right).
+        - blur-[6px] applies physical Depth-of-Field to the raw video, shifting all visual priority to the 3D Ninja.
       */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-80"
-      >
-        <source src="/videos/bg.mp4" type="video/mp4" />
-      </video>
+      <div className="absolute inset-0 scale-[1.15] blur-[6px]">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-70"
+        >
+          <source src="/videos/bg.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Cinematic Vignette to merge harsh edges into the void and center focus */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.95)_100%)]" />
