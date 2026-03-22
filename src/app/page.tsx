@@ -6,18 +6,14 @@ import Desire from "./components/Desire";
 import Conversion from "./components/Conversion";
 import Ecosystem from "./components/Ecosystem";
 import Footer from "./components/Footer";
-import StageObserver from "./components/StageObserver";
+import StageController from "./components/StageController";
 import CinematicEnvironment from "./components/CinematicEnvironment";
-import StageAnimations from "./components/StageAnimations";
 
 export default function Home() {
   return (
     <main>
-      {/* GSAP ScrollTrigger ↔ Lenis sync + stage triggers */}
-      <StageObserver />
-
-      {/* Stage-by-stage scroll-driven animations + depth overlays */}
-      <StageAnimations />
+      {/* Central GSAP Controller broadcasting Stage & ScrollProgress + animating typography zones */}
+      <StageController />
 
       {/* The Unified 3D Canvas + Postprocessing Environment */}
       <CinematicEnvironment />
