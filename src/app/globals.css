@@ -13,6 +13,7 @@
 @import "./styles/tokens.css";
 @import "./styles/typography.css";
 @import "./styles/layout.css";
+@import "./styles/motion.css";
 
 /* ============================================================
    BASE RESET & DOCUMENT

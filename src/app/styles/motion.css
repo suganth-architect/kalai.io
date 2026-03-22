@@ -1,0 +1,67 @@
+/* ============================================================
+   KALAI.IO — Motion System
+   Scroll-driven animations, overlays, initial states.
+   Only GPU-composited properties: opacity, transform, clip-path, filter.
+   ============================================================ */
+
+/* ── Progressive Enhancement: Initial States ──
+   Scoped under .js-ready so no-JS users see everything.
+   GSAP sets up fromTo states immediately on mount. */
+
+.js-ready #arrival .subtext-narrow {
+  opacity: 0;
+}
+
+/* ── Depth Overlays ── */
+
+.overlay-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 50%,
+    transparent 45%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  opacity: 0;
+  will-change: opacity;
+}
+
+.overlay-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background-size: 150px 150px;
+  background-repeat: repeat;
+  /* Procedural grain via inline SVG — zero external dependency */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+.overlay-peripheral {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity;
+  background:
+    linear-gradient(to right,  var(--color-void) 0%, transparent 8%),
+    linear-gradient(to left,   var(--color-void) 0%, transparent 8%);
+}
+
+/* ── Reduced Motion: Disable all motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .overlay-vignette,
+  .overlay-grain,
+  .overlay-peripheral {
+    display: none;
+  }
+
+  .js-ready #arrival .subtext-narrow {
+    opacity: 0.7;
+  }
+}

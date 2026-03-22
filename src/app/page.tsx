@@ -7,12 +7,16 @@ import Conversion from "./components/Conversion";
 import Footer from "./components/Footer";
 import StageObserver from "./components/StageObserver";
 import Thread from "./components/Thread";
+import StageAnimations from "./components/StageAnimations";
 
 export default function Home() {
   return (
     <main>
       {/* GSAP ScrollTrigger ↔ Lenis sync + stage triggers */}
       <StageObserver />
+
+      {/* Stage-by-stage scroll-driven animations + depth overlays */}
+      <StageAnimations />
 
       {/* The Thread — signature visual element */}
       <Thread />

@@ -1,0 +1,10 @@
+{
+  "name": "kalai.io",
+  "short_name": "kalai",
+  "description": "The first autonomous AI marketing agent for Indian SMBs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1014",
+  "theme_color": "#0e1014",
+  "icons": []
+}
