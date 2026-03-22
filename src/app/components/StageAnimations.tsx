@@ -73,6 +73,28 @@ function arrivalMotion() {
     { opacity: 0.7, delay: 1.5, duration: 0.8, ease: EASE_DECEL }
   );
 
+  /* Scroll indicator: vanishes immediately on first scroll. */
+  gsap.to("#arrival .scroll-indicator", {
+    opacity: 0,
+    scrollTrigger: {
+      trigger: "#arrival",
+      start: "5% top",
+      end: "15% top",
+      scrub: true,
+    },
+  });
+
+  /* Breathing gradient fades with the headline */
+  gsap.to("#arrival .arrival-breathing", {
+    opacity: 0,
+    scrollTrigger: {
+      trigger: "#arrival",
+      start: "60% top",
+      end: "85% top",
+      scrub: true,
+    },
+  });
+
   /* Headline exits: opacity dissolves as scroll enters DISRUPTION zone.
      Not a dismiss — a recession into the void. */
   gsap.to("#arrival .type-display", {

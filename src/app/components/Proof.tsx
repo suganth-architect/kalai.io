@@ -70,31 +70,31 @@ export default function Proof() {
         </div>
       </div>
 
-      {/* ── Artifact 3: Sunday Digest (Hero artifact) ── */}
+      {/* ── Artifact 3: Sunday Digest (Hero artifact — envy trigger) ── */}
       <div className="corridor-wide artifact-gap">
         <div className="exhibit-card-padded">
           <p className="type-micro uppercase tracking-wider text-tertiary mb-4">
             Sunday Digest · Week 12
           </p>
 
-          {/* Key metric */}
+          {/* Key metric — the number that creates envy */}
           <p className="type-heading mb-3">
-            <span className="metric-value">₹3.5L</span>{" "}
+            <span className="metric-value metric-glow">₹3.5L</span>{" "}
             estimated pipeline
           </p>
 
-          {/* Supporting metrics */}
+          {/* Supporting metrics — proof of autonomous operation */}
           <div className="grid-3 gap-3 mb-4">
-            <div>
-              <p className="type-statement weight-500">3</p>
+            <div className="metric-cell">
+              <p className="type-statement weight-500 metric-number">3</p>
               <p className="type-caption voice-aside">new leads</p>
             </div>
-            <div>
-              <p className="type-statement weight-500">4</p>
+            <div className="metric-cell">
+              <p className="type-statement weight-500 metric-number">4</p>
               <p className="type-caption voice-aside">posts published</p>
             </div>
-            <div>
-              <p className="type-statement weight-500">1,247</p>
+            <div className="metric-cell">
+              <p className="type-statement weight-500 metric-number">1,247</p>
               <p className="type-caption voice-aside">best post views</p>
             </div>
           </div>
@@ -105,37 +105,37 @@ export default function Proof() {
         </div>
       </div>
 
-      {/* ── Artifact 4: Before/After ── */}
+      {/* ── Artifact 4: Before/After — the emotional contrast ── */}
       <div className="corridor-wide">
-        {/* Before — cold */}
+        {/* Before — cold, lifeless, painful */}
         <div className="exhibit-card-padded exhibit-card-cold mb-4">
           <p className="type-micro uppercase tracking-wider text-tertiary mb-3">
             Before Kalai
           </p>
           <p className="type-body voice-aside">
-            Last Instagram post: 6 weeks ago.
+            Last Instagram post: <span className="pain-highlight">6 weeks ago.</span>
           </p>
           <p className="type-body voice-aside mt-2">
-            Google Business Profile: incomplete.
+            Google Business Profile: <span className="pain-highlight">incomplete.</span>
           </p>
           <p className="type-body voice-aside mt-2">
-            Enquiries this quarter from digital: zero.
+            Enquiries this quarter from digital: <span className="pain-highlight">zero.</span>
           </p>
         </div>
 
-        {/* After — warm */}
+        {/* After — warm, alive, enviable */}
         <div className="exhibit-card-padded exhibit-card-warm">
           <p className="type-micro uppercase tracking-wider text-accent-muted mb-3">
             After Kalai · 8 weeks
           </p>
           <p className="type-body voice-normal">
-            12 posts published across 3 platforms.
+            <span className="win-highlight">12 posts</span> published across 3 platforms.
           </p>
           <p className="type-body voice-normal mt-2">
-            Google Business Profile: verified, active, ranking.
+            Google Business Profile: <span className="win-highlight">verified, active, ranking.</span>
           </p>
           <p className="type-body voice-normal mt-2">
-            3 qualified enquiries. ₹3.5L pipeline.
+            <span className="win-highlight">3 qualified enquiries.</span> ₹3.5L pipeline.
           </p>
         </div>
       </div>
