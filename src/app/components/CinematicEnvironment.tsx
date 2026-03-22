@@ -54,17 +54,37 @@ export default function CinematicEnvironment() {
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-20 bg-black overflow-hidden">
-      <div ref={bg1} className="absolute inset-0 will-change-transform opacity-100">
-        <Image src="/images/bg/environment_1_arrival_1774214165077.png" alt="Arrival Environment" fill className="object-cover opacity-80" quality={100} unoptimized priority />
+      
+      {/* 
+        To fix pixelation of scaled AI background images, we apply a Depth-of-Field blur 
+        to soften the resolution and scale it slightly to hide blurred edges.
+      */}
+      <div className="absolute inset-0 scale-105 blur-[10px]">
+        <div ref={bg1} className="absolute inset-0 will-change-transform opacity-100">
+          <Image src="/images/bg/environment_1_arrival_1774214165077.png" alt="Arrival Environment" fill className="object-cover opacity-80" quality={100} unoptimized priority />
+        </div>
+        <div ref={bg2} className="absolute inset-0 will-change-transform opacity-0">
+          <Image src="/images/bg/environment_2_disruption_1774214181037.png" alt="Disruption Environment" fill className="object-cover opacity-80" quality={100} unoptimized />
+        </div>
+        <div ref={bg3} className="absolute inset-0 will-change-transform opacity-0">
+          <Image src="/images/bg/environment_3_resolution_1774214197078.png" alt="Resolution Environment" fill className="object-cover opacity-80" quality={100} unoptimized />
+        </div>
       </div>
-      <div ref={bg2} className="absolute inset-0 will-change-transform opacity-0">
-        <Image src="/images/bg/environment_2_disruption_1774214181037.png" alt="Disruption Environment" fill className="object-cover opacity-80" quality={100} unoptimized />
-      </div>
-      <div ref={bg3} className="absolute inset-0 will-change-transform opacity-0">
-        <Image src="/images/bg/environment_3_resolution_1774214197078.png" alt="Resolution Environment" fill className="object-cover opacity-80" quality={100} unoptimized />
-      </div>
+
       {/* Cinematic Vignette to merge harsh edges into the void */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.8)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.95)_100%)]" />
+
+      {/* 
+        High-Frequency SVG Noise Overlay 
+        This is the ultimate fix for low-res pixelation banding. 
+        It injects true pixel-level detail over the blurred background, making it look incredibly high-end.
+      */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.15] mix-blend-screen pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <filter id="cinematic-noise">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#cinematic-noise)"/>
+      </svg>
     </div>
   );
 }
