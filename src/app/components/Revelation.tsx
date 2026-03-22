@@ -1,9 +1,18 @@
+import Image from "next/image";
+
 export default function Revelation() {
   return (
     <section
       id="revelation"
       className="stage-revelation relative stage-pad"
     >
+      <Image
+        src="/images/bg/revelation_bg_1774213073079.png"
+        alt="Revelation Environment"
+        fill
+        className="object-cover -z-10 opacity-70"
+        loading="lazy"
+      />
       <div className="corridor align-center">
         {/* ── The Name — center-outward reveal placeholder ── */}
         <h2 className="type-heading weight-600 text-brightest mb-4">

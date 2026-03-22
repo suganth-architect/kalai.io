@@ -1,9 +1,19 @@
+import Image from "next/image";
+
 export default function Arrival() {
   return (
     <section
       id="arrival"
       className="stage-arrival relative flex min-h-screen flex-col items-center justify-center stage-pad-arrival"
     >
+      <Image
+        src="/images/bg/arrival_bg_1774213040951.png"
+        alt="Arrival Environment"
+        fill
+        className="object-cover -z-10 opacity-70"
+        priority
+      />
+
       {/* Ambient breathing gradient — alive, not static */}
       <div className="arrival-breathing" aria-hidden="true" />
 

@@ -74,12 +74,13 @@ export default function Thread() {
       const halfW = vw * 0.2;
       
       const breathe = Math.sin(t * 0.5) * 0.05; // Gentle breathing idle
-      const opacity = clamp01(0.85 + breathe); 
-      const sw = 1.5; 
+      const opacity = clamp01(0.6 + breathe); 
+      const sw = 1.0; 
       
-      // Amplified strictly by scroll (vMag)
-      const curve = Math.sin(t * 0.8) * (3 + vMag * 15); 
-      const path = `M${cx - halfW},${y} Q${cx},${y + curve} ${cx + halfW},${y}`;
+      // Extremely subtle, controlled line
+      const curve = Math.sin(t * 0.5) * (1 + vMag * 4); 
+      const shadowOffset = Math.sin(t * 1.5) * 2; // Abstract ninja movement hint
+      const path = `M${cx - halfW},${y} Q${cx + shadowOffset},${y + curve} ${cx + halfW},${y}`;
       return { paths: [path], opacities: [opacity], strokeWidths: [sw] };
     },
     []
@@ -99,18 +100,19 @@ export default function Thread() {
       for (let i = 0; i < 3; i++) {
         const yOffset = (i - 1) * separation;
         
-        // Smooth organic shifting that amplifies sharply on scroll
-        const jitterX = Math.sin(t * (0.8 + i * 0.6)) * (4 + vMag * 12);
+        // High frequency unstable jitter, not loose organic
+        const jitterX = Math.sin(t * (15 + i * 3)) * (1 + vMag * 10);
         
-        const opacity = 0.85; 
-        const sw = 1.5;
+        const opacity = 0.7; 
+        const sw = 1.0 + Math.random() * 0.5 * vMag;
         
         const x1 = cx - halfW + jitterX;
-        const x2 = cx + halfW + jitterX * 0.7;
+        const x2 = cx + halfW - jitterX;
         const y = baseY + yOffset;
         
-        const curveY = y + Math.sin(t * (1.1 + i)) * (5 + vMag * 10);
-        paths.push(`M${x1},${y} Q${(x1+x2)/2},${curveY} ${x2},${y}`);
+        // Sharp broken angled lines instead of curves
+        const midY = y + Math.sin(t * (20 + i)) * (3 + vMag * 15);
+        paths.push(`M${x1},${y} L${cx + jitterX * 2},${midY} L${x2},${y}`);
         opacities.push(opacity);
         strokeWidths.push(sw);
       }
@@ -123,32 +125,29 @@ export default function Thread() {
   const buildRevelation = useCallback(
     (t: number, progress: number, vw: number, vh: number, vMag: number): ThreadFrame => {
       const isMobile = vw < 768;
-      const x = isMobile ? vw * 0.08 : vw * 0.382;
       
       const drawT = clamp01((progress - 0.15) / 0.85); 
+      const opacity = lerp(0.85, 1.0, progress); // High contrast flare
+      const sw = 1.5;
       
-      // Revelation delayed reveal trigger is at section scroll 65% to 55%.
-      const snapToStraight = clamp01(1 - Math.abs(progress - 0.35) / 0.08); 
+      // Sharp light slash cutting diagonally
+      const startX = isMobile ? vw * 0.9 : vw * 0.6;
+      const startY = vh * 0.05;
+      const targetX = isMobile ? vw * 0.1 : vw * 0.382;
+      const targetY = vh * 0.95;
       
-      const opacity = lerp(0.85, 0.95, snapToStraight);
+      const endX = lerp(startX, targetX, drawT);
+      const endY = lerp(startY + 5, targetY, drawT);
       
-      const startY = vh * 0.15;
-      const endY = lerp(startY + 10, vh * 0.90, drawT);
+      // Shadow crossing effect (Ninja presence)
+      const shadowBlur = Math.sin(t * 8) > 0.9 ? 1 : 0;
+      const finalOpacity = opacity * (1 - shadowBlur * 0.3);
       
-      const microWave = Math.sin(t * 0.5) * (1 + vMag * 3) * (1 - snapToStraight);
-      const sw = 1.5; 
-      
-      const endX = x - microWave * 0.5;
-      
-      // When activation approaches 1, precisely straightens.
-      const curveX = lerp(x + Math.sin(t * 0.7) * (8 + vMag * 8), x, snapToStraight); 
-      const curveCtrlBotX = lerp(x - Math.sin(t * 0.5) * (8 + vMag * 8), x, snapToStraight);
-      
-      const path = `M${x + microWave},${startY} C${curveX},${startY + 50} ${curveCtrlBotX},${endY - 50} ${endX},${endY}`;
+      const path = `M${startX},${startY} L${endX},${endY}`;
 
       return {
         paths: [path],
-        opacities: [opacity],
+        opacities: [finalOpacity],
         strokeWidths: [sw]
       };
     },
@@ -163,12 +162,11 @@ export default function Thread() {
       const opacities: number[] = [];
       const strokeWidths: number[] = [];
 
-      // Main line: smooth gentle C curve, responds clearly to movement
-      const ctrlX1 = x + Math.sin(t * 0.6) * (3 + vMag * 10);
-      const ctrlX2 = x - Math.sin(t * 0.8) * (3 + vMag * 10);
-      paths.push(`M${x},${vh * 0.05} C${ctrlX1},${vh * 0.3} ${ctrlX2},${vh * 0.7} ${x},${vh * 0.95}`);
-      opacities.push(0.9); 
-      strokeWidths.push(1.5); 
+      // Main line: guiding, straight, minimal
+      const xOffset = Math.sin(t * 0.5) * (0.5 + vMag * 2);
+      paths.push(`M${x + xOffset},${vh * 0.05} L${x - xOffset},${vh * 0.95}`);
+      opacities.push(0.85); 
+      strokeWidths.push(1.0); 
 
       // Structural branches pinning the cards visually
       const branchYPositions = [0.25, 0.50, 0.75];
@@ -203,23 +201,22 @@ export default function Thread() {
       
       const dampen = 1 - clamp01((progress - 0.8) / 0.2);
       
-      // Transition = amplified movement. Idle = smooth flowing.
-      const amplitude = lerp(4, 12 + vMag * 20, clamp01(progress / 0.3));
+      // Transition = amplified movement. Idle = calm, completely serene.
+      const amplitude = lerp(0.5, 3 + vMag * 10, clamp01(progress / 0.3));
 
       let path = "";
-      const segments = 40;
+      const segments = 20;
       const segHeight = vh / segments;
 
       for (let i = 0; i <= segments; i++) {
         const y = i * segHeight;
-        const wave = Math.sin(y * waveFreq + t * 1.5) * amplitude * dampen;
-        const micro = Math.sin(y * 0.05 + t * 0.8) * (1 + vMag * 3);
-        const px = x + wave + micro;
+        const wave = Math.sin(y * waveFreq + t * 0.5) * amplitude * dampen;
+        const px = x + wave;
         path += i === 0 ? `M${px},${y}` : ` L${px},${y}`;
       }
 
-      const opacity = 0.9;
-      const sw = 1.5;
+      const opacity = 0.7;
+      const sw = 1.0;
       return { paths: [path], opacities: [opacity], strokeWidths: [sw] };
     },
     []
@@ -238,17 +235,16 @@ export default function Thread() {
       const termProgress = progress > 0.5 ? clamp01((progress - 0.5) / 0.3) : 0;
       
       const movingFactor = 1 - termProgress;
-      const residual = (1 - straighten) * (3 + vMag * 8) * movingFactor;
+      const residual = (1 - straighten) * (1 + vMag * 3) * movingFactor;
 
       let path = "";
-      const segments = 30;
+      const segments = 15;
       const segHeight = vh / segments;
 
       for (let i = 0; i <= segments; i++) {
         const ratio = i / segments;
         const y = i * segHeight;
-        const wave = Math.sin(y * 0.03 + t * 1.2) * residual;
-        const px = lerp(topX + wave, ctaX, ratio * straighten);
+        const px = lerp(topX, ctaX, ratio * straighten) + (Math.sin(y * 0.05 + t) * residual);
         path += i === 0 ? `M${px},${y}` : ` L${px},${y}`;
       }
 
@@ -284,16 +280,19 @@ export default function Thread() {
 
       frame.paths.forEach((d, i) => {
         if (paths[i] && glowPs[i]) {
-          // Inner Core: Sharp, ~0.9 opacity, ~1.5px thickness
+          // Inner Core: Sharp, white blade
           paths[i].setAttribute("d", d);
-          paths[i].style.opacity = String(Math.max(0.3, frame.opacities[i])); // Never drops below 0.3
+          paths[i].style.opacity = String(Math.max(0.4, frame.opacities[i])); // Solid core
           paths[i].style.strokeWidth = String(frame.strokeWidths[i]);
+          paths[i].style.stroke = "rgba(255, 255, 255, 0.95)";
           
-          // Outer Glow: Soft, ~0.15-0.25 opacity, ~3.5px thickness, blur(1.5px)
-          const glowOpacity = Math.max(0.15, frame.opacities[i] * 0.25);
+          // Outer Glow: Controlled, NOT neon, NOT messy. Very tight blur.
+          const glowOpacity = Math.max(0.08, frame.opacities[i] * 0.2);
           glowPs[i].setAttribute("d", d);
           glowPs[i].style.opacity = String(glowOpacity);
-          glowPs[i].style.strokeWidth = "3.5";
+          glowPs[i].style.strokeWidth = "2.5";
+          glowPs[i].style.stroke = "rgba(255, 255, 255, 0.6)";
+          glowPs[i].style.filter = "blur(1px)";
         }
       });
 
@@ -425,9 +424,8 @@ export default function Thread() {
         <path
           key={`core-${i}`}
           ref={setPathRef(i)}
-          className="thread-line"
+          className="thread-line mix-blend-screen"
           fill="none"
-          stroke="var(--color-accent)"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
