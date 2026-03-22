@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Proof() {
   return (
     <section
@@ -16,8 +18,17 @@ export default function Proof() {
         <div className="exhibit-card">
           {/* Brand specimen — dark matte display */}
           <div className="specimen-display">
-            {/* Logo placeholder */}
-            <div className="specimen-logo" />
+            {/* D2V Logo integration with slow pulse glow effect */}
+            <div className="d2v-logo-wrapper">
+              <div className="d2v-logo-glow" />
+              <Image 
+                src="/images/d2v-logo.png" 
+                alt="D2V Architectural Consultancy Logo" 
+                width={160} 
+                height={160} 
+                className="d2v-logo-img"
+              />
+            </div>
 
             <p className="type-body weight-500 text-primary">
               D2V Architectural Consultancy
@@ -39,34 +50,53 @@ export default function Proof() {
 
       {/* ── Artifact 2: Instagram Feed Grid ── */}
       <div className="corridor-wide artifact-gap">
-        <div className="exhibit-card">
-          {/* Simulated IG chrome — minimal */}
-          <div className="ig-chrome">
-            <div className="ig-dot" />
-            <div className="ig-dot" />
-            <div className="ig-dot" />
+        <div className="poster-gallery">
+          <div className="poster-item">
+            <Image 
+              src="/images/posters/poster-1.png" 
+              alt="Interior Mood Poster" 
+              width={600} 
+              height={750} 
+              quality={90}
+              className="poster-img"
+            />
           </div>
+          <div className="poster-item">
+            <Image 
+              src="/images/posters/poster-2.png" 
+              alt="Light and Shadow Poster" 
+              width={600} 
+              height={750} 
+              quality={90}
+              className="poster-img"
+            />
+          </div>
+          <div className="poster-item">
+            <Image 
+              src="/images/posters/poster-3.png" 
+              alt="Modern Staircase Poster" 
+              width={600} 
+              height={750} 
+              quality={90}
+              className="poster-img"
+            />
+          </div>
+          <div className="poster-item">
+            <Image 
+              src="/images/posters/poster-4.png" 
+              alt="Villa Twilight Poster" 
+              width={600} 
+              height={750} 
+              quality={90}
+              className="poster-img"
+            />
+          </div>
+        </div>
 
-          {/* 3×3 Grid — simulated feed */}
-          <div className="ig-grid">
-            {Array.from({ length: 9 }).map((_, i) => {
-              const hues = [25, 200, 35, 180, 28, 210, 30, 195, 40];
-              const bg = `hsl(${hues[i]}, ${15 + i * 3}%, ${18 + i * 2}%)`;
-              return (
-                <div
-                  key={i}
-                  className="ig-cell"
-                  style={{ backgroundColor: bg }}
-                />
-              );
-            })}
-          </div>
-
-          <div className="feed-caption">
-            <p className="type-caption voice-aside">
-              A consistent, professional feed — generated and published autonomously.
-            </p>
-          </div>
+        <div className="feed-caption align-center mt-4">
+          <p className="type-caption voice-aside">
+            Premium, original creative — generated and published autonomously.
+          </p>
         </div>
       </div>
 

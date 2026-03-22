@@ -213,3 +213,39 @@
     opacity: 0.6;
   }
 }
+
+/* ============================================================
+   PROOF — D2V Logo Glow
+   ============================================================ */
+
+.d2v-logo-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-4);
+  background: radial-gradient(circle at center, hsla(38, 92%, 50%, 0.05) 0%, transparent 70%);
+  border-radius: var(--radius-logo);
+}
+
+.d2v-logo-img {
+  z-index: 2;
+  position: relative;
+  border-radius: var(--radius-logo);
+}
+
+.d2v-logo-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--radius-logo);
+  background: var(--color-accent);
+  filter: blur(25px);
+  opacity: 0.15;
+  animation: d2v-breathe 6s ease-in-out infinite alternate;
+}
+
+@keyframes d2v-breathe {
+  0% { transform: scale(0.95); opacity: 0.08; filter: blur(20px); }
+  100% { transform: scale(1.05); opacity: 0.2; filter: blur(35px); }
+}
