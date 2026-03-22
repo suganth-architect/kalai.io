@@ -47,25 +47,25 @@
   --color-ig-chrome: hsl(220, 8%, 11%);
 
   /* ── Spacing Scale (8px system, /Visual Design System §4.2) ── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 16px;
-  --space-4: 24px;
-  --space-5: 40px;
-  --space-6: 64px;
-  --space-7: 96px;
-  --space-8: 128px;
+  --space-1: 6px;
+  --space-2: 12px;
+  --space-3: 24px;
+  --space-4: 36px;
+  --space-5: 56px;
+  --space-6: 88px;
+  --space-7: 128px;
+  --space-8: 184px;
 
   /* ── Opacity — Voice Control (/Visual Design System §1.6 Rule 4) ── */
   --voice-full: 1;
-  --voice-normal: 0.87;
-  --voice-aside: 0.7;
-  --voice-whisper: 0.6;
-  --voice-sub: 0.45;
+  --voice-normal: 0.90;
+  --voice-aside: 0.65;
+  --voice-whisper: 0.40;
+  --voice-sub: 0.20;
 
   /* ── Radii ── */
-  --radius-card: 8px;
-  --radius-logo: 12px;
+  --radius-card: 0px;
+  --radius-logo: 0px;
 
   /* ── Shadows — directional, single-source ── */
   --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);

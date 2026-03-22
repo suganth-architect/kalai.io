@@ -78,9 +78,9 @@ export default function Proof() {
           </p>
 
           {/* Key metric — the number that creates envy */}
-          <p className="type-heading mb-3">
-            <span className="metric-value metric-glow">₹3.5L</span>{" "}
-            estimated pipeline
+          <p className="type-display mb-3">
+            <span className="metric-value metric-glow">₹3.5L</span>
+            <span className="type-statement voice-aside block mt-3">estimated pipeline</span>
           </p>
 
           {/* Supporting metrics — proof of autonomous operation */}

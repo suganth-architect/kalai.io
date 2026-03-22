@@ -30,7 +30,7 @@ export default function Conversion() {
     >
       <div className="corridor-narrow align-center">
         {/* ── CTA Heading — bookend with REVELATION ── */}
-        <h2 className="type-heading mb-5">
+        <h2 className="type-display mb-6 text-center">
           Build your brand in 10 minutes.
         </h2>
 
@@ -40,7 +40,7 @@ export default function Conversion() {
             id="cta-email"
             type="email"
             name="email"
-            className="cta-input"
+            className="cta-input text-center"
             placeholder="Your email"
             required
             autoComplete="email"

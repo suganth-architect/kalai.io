@@ -168,27 +168,19 @@
 
 .exhibit-card {
   background-color: var(--color-surface-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: var(--shadow-card);
-  transition: box-shadow 400ms ease, transform 400ms ease;
+  transition: transform 400ms ease;
 }
 
 .exhibit-card-padded {
   background-color: var(--color-surface-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
   padding: var(--space-4);
-  box-shadow: var(--shadow-card);
-  transition: box-shadow 400ms ease, transform 400ms ease;
+  transition: transform 400ms ease;
 }
 
-/* Hover: subtle lift — gallery object responding to proximity */
 @media (hover: hover) {
   .exhibit-card:hover,
   .exhibit-card-padded:hover {
-    box-shadow: var(--shadow-elevated);
     transform: translateY(-2px);
   }
 }
@@ -216,10 +208,10 @@
   width: 100%;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--color-border-emphasis);
-  padding: var(--space-3) 0;
-  font-size: clamp(1.25rem, 1.5vw + 0.5rem, 1.75rem);
-  font-weight: 400;
+  border-bottom: 2px solid var(--color-border-emphasis); /* Thicker structural line */
+  padding: var(--space-4) 0;
+  font-size: clamp(1.75rem, 3vw + 0.75rem, 2.5rem); /* Scaled way up */
+  font-weight: 500;
   line-height: 1.35;
   color: var(--color-text-primary);
   outline: none;
@@ -239,7 +231,7 @@
 
 .cta-input:focus {
   border-bottom-color: var(--color-accent);
-  box-shadow: 0 1px 0 0 var(--color-accent), 0 4px 20px var(--color-accent-glow);
+  box-shadow: 0 2px 0 0 var(--color-accent), 0 8px 32px var(--color-accent-glow);
 }
 
 /* ============================================================
@@ -252,10 +244,10 @@
   background-color: var(--color-accent);
   color: var(--color-void);
   border: none;
-  border-radius: var(--radius-card);
-  font-size: clamp(1rem, 0.5vw + 0.75rem, 1.125rem);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  border-radius: var(--radius-card); /* Now 0 for brutalist structure */
+  font-size: clamp(1.125rem, 1vw + 1rem, 1.35rem);
+  font-weight: 600; /* Stomp voice */
+  letter-spacing: 0.02em;
   cursor: pointer;
   box-shadow: var(--shadow-accent-glow);
   transition:
@@ -465,7 +457,7 @@
 
 /* Artifact gap (48px between PROOF artifacts — museum spacing) */
 .artifact-gap {
-  margin-bottom: 48px;
+  margin-bottom: clamp(80px, 15vh, 160px);
 }
 
 /* ============================================================
@@ -493,8 +485,10 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 1;
+  z-index: 10;
   pointer-events: none;
+  mix-blend-mode: screen; 
+  filter: drop-shadow(0 0 4px rgba(243, 156, 18, 0.35));
   will-change: opacity;
 }
 

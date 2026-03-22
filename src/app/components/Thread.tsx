@@ -91,8 +91,9 @@ export default function Thread() {
       const halfW = vw * 0.2;
       const breathe = Math.sin(t * 0.785) * 0.03;
       const opacity = 0.15 + breathe;
-      const sw = 1.2 + Math.sin(t * 0.4) * 0.15;
-      const path = `M${cx - halfW},${y} L${cx + halfW},${y}`;
+      const sw = 1.2 + Math.sin(t * 0.8) * 0.6; // increased thickness variation
+      const curve = Math.sin(t * 0.5) * 15; // slight organic bend
+      const path = `M${cx - halfW},${y} Q${cx},${y + curve} ${cx + halfW},${y}`;
       return { paths: [path], opacities: [opacity], strokeWidths: [sw] };
     },
     []
@@ -111,14 +112,16 @@ export default function Thread() {
 
       for (let i = 0; i < 3; i++) {
         const yOffset = (i - 1) * separation * (2 + Math.sin(t * (1.2 + i * 0.3)) * 0.8);
-        const jitterX = wobble(t + i * 2.1, 2.5 + i * 0.7, 1.5);
-        const flicker = Math.sin(t * (1.8 + i * 0.9) + i * 1.3);
-        const opacity = 0.10 + (0.20 * (0.5 + flicker * 0.5));
-        const sw = 1.0 + Math.sin(t * (0.6 + i * 0.2)) * 0.3;
+        const jitterX = wobble(t + i * 2.1, 4.5 + i * 0.7, 3.0); // intensified drift
+        const flicker = Math.sin(t * (4.8 + i * 1.9) + i * 1.3); // faster flicker
+        const sharpFlicker = flicker > 0.8 ? 0.9 : (0.05 + 0.1 * flicker); // harsh bursts
+        const opacity = sharpFlicker;
+        const sw = 1.0 + Math.sin(t * (2.6 + i * 0.2)) * 1.2; // more thickness shifts
         const x1 = cx - halfW + jitterX;
         const x2 = cx + halfW + jitterX * 0.7;
         const y = baseY + yOffset;
-        paths.push(`M${x1},${y} L${x2},${y}`);
+        const curveY = y + Math.sin(t * (1.1 + i)) * 10; // slight bow
+        paths.push(`M${x1},${y} Q${(x1+x2)/2},${curveY} ${x2},${y}`);
         opacities.push(opacity);
         strokeWidths.push(sw);
       }
@@ -139,8 +142,10 @@ export default function Thread() {
       const startY = vh * 0.15;
       const endY = lerp(startY + 10, vh * 0.90, drawT);
       const microWave = Math.sin(t * 0.3) * 0.5;
-      const sw = lerp(1.5, 1.8, drawT) + Math.sin(t * 0.5) * 0.1;
-      const path = `M${x + microWave},${startY} L${x - microWave * 0.5},${endY}`;
+      const sw = lerp(1.5, 3.5, drawT) + Math.sin(t * 0.9) * 0.8; // THICKER burst
+      const endX = x - microWave * 0.5;
+      const curveX = x + Math.sin(t * 0.6) * 20; // gentle curve
+      const path = `M${x + microWave},${startY} C${curveX},${startY + 50} ${x - Math.sin(t * 0.4) * 15},${endY - 50} ${endX},${endY}`;
 
       return {
         paths: [path],
@@ -160,10 +165,12 @@ export default function Thread() {
       const opacities: number[] = [];
       const strokeWidths: number[] = [];
 
-      // Main vertical line
-      paths.push(`M${x},${vh * 0.05} L${x},${vh * 0.95}`);
+      // Main vertical line (slight S-curve)
+      const ctrlX1 = x + Math.sin(t * 0.5) * 18;
+      const ctrlX2 = x - Math.sin(t * 0.7) * 18;
+      paths.push(`M${x},${vh * 0.05} C${ctrlX1},${vh * 0.3} ${ctrlX2},${vh * 0.7} ${x},${vh * 0.95}`);
       opacities.push(0.45);
-      strokeWidths.push(1.5 + Math.sin(t * 0.4) * 0.1);
+      strokeWidths.push(2.0 + Math.sin(t * 0.8) * 0.6); // more noticeable breathing
 
       // Branches (max 3)
       const branchYPositions = [0.25, 0.50, 0.75];
@@ -221,7 +228,7 @@ export default function Thread() {
       const isMobile = vw < 768;
       const x = isMobile ? vw * 0.08 : vw * 0.382;
       const straighten = clamp01(progress / 0.4);
-      const ctaX = vw / 2 - vw * 0.22;
+      const ctaX = vw / 2; // Resolve perfectly into the exact center of CTA
       const ctaY = vh * 0.45;
       const topX = lerp(x, ctaX, straighten * 0.3);
       const pulse = Math.sin(t * 1.571) * 0.05;

@@ -14,9 +14,9 @@ import { useLenis } from "lenis/react";
    ════════════════════════════════════════════════════════════════ */
 
 /* ── Custom ease curves ── */
-const EASE_DECEL = "power2.out";       // fast start, gentle stop
-const EASE_SETTLE = "power3.out";      // fast overshoot settle (card placement)
-const EASE_SYMMETRIC = "power1.inOut"; // no urgency (DESIRE)
+const EASE_DECEL = "power3.out";       // stronger slowdown
+const EASE_SETTLE = "back.out(1.2)";   // adds a heavy physical settle
+const EASE_SYMMETRIC = "sine.inOut";   // smoother organic flow
 const EASE_NONE = "none";             // linear scrub
 
 export default function StageAnimations() {
@@ -70,7 +70,7 @@ function arrivalMotion() {
   gsap.fromTo(
     "#arrival .subtext-narrow",
     { opacity: 0 },
-    { opacity: 0.7, delay: 1.5, duration: 0.8, ease: EASE_DECEL }
+    { opacity: 0.7, delay: 2.2, duration: 1.4, ease: EASE_DECEL }
   );
 
   /* Scroll indicator: vanishes immediately on first scroll. */
@@ -164,7 +164,7 @@ function disruptionMotion() {
   if (costBlock) {
     gsap.fromTo(
       costBlock,
-      { clipPath: "inset(0 0 100% 0)", scale: 0.97, opacity: 0.5 },
+      { clipPath: "inset(0 0 100% 0)", scale: 0.94, opacity: 0.3 },
       {
         clipPath: "inset(0 0 0% 0)",
         scale: 1,
@@ -172,8 +172,8 @@ function disruptionMotion() {
         ease: EASE_DECEL,
         scrollTrigger: {
           trigger: costBlock,
-          start: "top 80%",
-          end: "top 58%",
+          start: "top 75%",
+          end: "top 45%",
           scrub: true,
         },
       }
@@ -191,18 +191,20 @@ function disruptionMotion() {
    ════════════════════════════════════════════════════════════════ */
 
 function revelationMotion() {
-  /* "kalai.io" name: center-outward clip-path.
-     Unique to this word and the CONVERSION CTA heading (bookend). */
+  /* "kalai.io" name: delayed reveal / cinematic burst.
+     User scrolls into nothingness, then it abruptly drops out. */
   gsap.fromTo(
     "#revelation .type-heading",
-    { clipPath: "inset(0 50% 0 50%)" },
+    { clipPath: "inset(0 50% 0 50%)", scale: 1.15, filter: "brightness(2)" },
     {
       clipPath: "inset(0 0% 0 0%)",
-      ease: EASE_SETTLE,
+      scale: 1,
+      filter: "brightness(1)",
+      ease: "expo.out",
       scrollTrigger: {
         trigger: "#revelation .type-heading",
-        start: "top 82%",
-        end: "top 58%",
+        start: "top 65%",
+        end: "top 55%",
         scrub: true,
       },
     }
@@ -217,8 +219,8 @@ function revelationMotion() {
       ease: EASE_DECEL,
       scrollTrigger: {
         trigger: "#revelation .type-tamil-display",
-        start: "top 80%",
-        end: "top 64%",
+        start: "top 62%",
+        end: "top 48%",
         scrub: true,
       },
     }
@@ -331,10 +333,10 @@ function proofMotion() {
   const artifacts = gsap.utils.toArray<HTMLElement>("#proof .corridor-wide");
 
   artifacts.forEach((el) => {
-    /* Entry: materialization from depth */
+    /* Entry: materialization from depth (increased distance and blur) */
     gsap.fromTo(
       el,
-      { opacity: 0.3, y: 20, filter: "blur(2px)" },
+      { opacity: 0.15, y: 80, filter: "blur(6px)" },
       {
         opacity: 1,
         y: 0,
@@ -342,8 +344,8 @@ function proofMotion() {
         ease: EASE_SETTLE,
         scrollTrigger: {
           trigger: el,
-          start: "top 88%",
-          end: "top 55%",
+          start: "top 95%",
+          end: "top 50%",
           scrub: true,
         },
       }
@@ -499,14 +501,14 @@ function overlayMotion() {
     },
   });
 
-  /* Vignette recedes during "The Breath" (DISRUPTION→REVELATION).
-     The lit zone opens up — relief has geometry. */
+  /* Vignette retains blackness longer, snapping away precisely
+     when the KALAI.IO text reveals (65%). Creates "wtf" tension. */
   gsap.to(".overlay-vignette", {
     opacity: 0,
     scrollTrigger: {
       trigger: "#revelation",
-      start: "top 90%",
-      end: "top 40%",
+      start: "top 65%",
+      end: "top 35%",
       scrub: true,
     },
   });
