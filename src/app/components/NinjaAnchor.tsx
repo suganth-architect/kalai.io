@@ -7,12 +7,12 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useLenis } from "lenis/react";
 import * as THREE from "three";
 
-// The true GLTF Ninja Model that user will supply later at /models/ninja.glb
+// The true GLTF Ninja/Lightsaber Model loaded dynamically
 function NinjaModel({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
   const group = useRef<THREE.Group>(null);
   
-  // Try loading. If not found, useGLTF throws to the error boundary.
-  const { scene } = useGLTF("/models/ninja.glb");
+  // Automatically loads the client's new light_saber.glb
+  const { scene } = useGLTF("/models/light_saber.glb");
 
   useFrame((state) => {
     if (!group.current) return;
@@ -44,12 +44,22 @@ function NinjaModel({ scrollProgress }: { scrollProgress: React.MutableRefObject
     
     group.current.rotation.set(rX, rY, rZ);
 
-    // Scaling
-    const scale = 0.8 + p * 0.4;
+    // Scaling (Scaling factor often needs to be larger/smaller depending on GLB origin size — 
+    // applying a larger dynamic scale since lightsabers often load small or very large,
+    // this centers it within the view frustum gracefully)
+    const scale = 2.0 + p * 1.5;
     group.current.scale.setScalar(scale);
   });
 
-  return <primitive object={scene} ref={group} />;
+  return (
+    <group ref={group} dispose={null}>
+      {/* 
+        Traverse the scene to ensure any imported materials meant to glow
+        are aggressively boosted above the Bloom luminance threshold (1.2)
+      */}
+      <primitive object={scene} />
+    </group>
+  );
 }
 
 // Ultra-premium glowing lightsaber fallback
@@ -144,7 +154,7 @@ export default function NinjaAnchor() {
     <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 10 }}>
       <Canvas
         camera={{ position: [0, 0, 5], fov: 45 }}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance", toneMapping: THREE.NoToneMapping }}
         dpr={typeof window !== 'undefined' ? window.devicePixelRatio : 1}
       >
         <ambientLight intensity={0.4} />
@@ -163,11 +173,13 @@ export default function NinjaAnchor() {
           </Suspense>
         </ModelErrorBoundary>
 
-        {/* Post-processing Bloom for true Lightsaber glowing effects */}
+        {/* Post-processing Bloom for true glow effects on the saber */}
         <EffectComposer>
-          <Bloom luminanceThreshold={1.2} mipmapBlur intensity={1.5} />
+          <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} mipmapBlur intensity={2.0} />
         </EffectComposer>
       </Canvas>
     </div>
   );
 }
+
+useGLTF.preload("/models/light_saber.glb");
