@@ -21,24 +21,29 @@ function NinjaModel({ scrollProgress }: { scrollProgress: React.MutableRefObject
     const startY = 3.5;
     const endY = -1.5;
     
+    // Wait until Revelation (around p=0.4) to really bring it forward
     const startX = isMobile ? 1.5 : 2.5;
-    const endX = 0;
+    // Saber cuts through at key moments
+    const currentX = startX - p * startX * 1.5;
     
     // Translation
     const currentY = startY + p * (endY - startY);
-    // Smooth swooping curve for X
-    const curveX = Math.sin(p * Math.PI) * 2;
-    const currentX = startX - p * startX - curveX;
     
-    // Z Depth
-    const currentZ = -4 + p * 3;
+    // Z Depth - keep it further back initially, push forward at revelation
+    const zBase = -6;
+    const zPush = p > 0.4 ? (p - 0.4) * 8 : 0;
+    const currentZ = zBase + zPush;
     
     group.current.position.set(currentX, currentY, currentZ);
     
-    // Complex continuous rotation
-    const rY = Math.sin(p * Math.PI * 4) * 0.5 + state.clock.elapsedTime * 0.2;
-    const rZ = Math.sin(p * Math.PI * 2) * 0.1;
-    const rX = Math.cos(p * Math.PI * 2) * 0.15;
+    // Controlled rotation - mostly still, breathing subtly, rotates on scroll
+    // Removes the constant spinning!
+    const breatheY = Math.sin(state.clock.elapsedTime * 1.5) * 0.05;
+    const breatheX = Math.cos(state.clock.elapsedTime * 1.1) * 0.02;
+    
+    const rY = p * Math.PI * 1.5 + breatheY;
+    const rZ = Math.sin(p * Math.PI) * 0.2;
+    const rX = Math.max(0, 0.5 - p * 1.5) + breatheX; // Points forward eventually
     
     group.current.rotation.set(rX, rY, rZ);
 

@@ -8,10 +8,10 @@
   /* ── Color System (/Visual Design System §2.1) ── */
   
   /* Backgrounds — darkest to lightest */
-  --color-void: hsl(220, 12%, 6%);
-  --color-surface: hsl(220, 8%, 12%);
-  --color-surface-warm: hsl(30, 10%, 15%);
-  --color-surface-elevated: hsl(220, 6%, 18%);
+  --color-void: hsl(220, 15%, 3%);
+  --color-surface: hsl(220, 8%, 7%);
+  --color-surface-warm: hsl(30, 10%, 12%);
+  --color-surface-elevated: hsl(220, 6%, 14%);
   --color-conversion-dark: hsl(225, 15%, 9%);
 
   /* Stage backgrounds — temperature map */

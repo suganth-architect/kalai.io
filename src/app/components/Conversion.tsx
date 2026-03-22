@@ -13,12 +13,13 @@ export default function Conversion() {
       e.preventDefault();
       setIsLoading(true);
 
-      /* Simulate brief processing before redirect.
-         In production, replace with actual signup API call. */
-      const email = new FormData(form).get("email");
+      /* Simulate brief processing, then show success state without redirect */
       setTimeout(() => {
-        window.location.href = `/signup?email=${encodeURIComponent(String(email))}`;
-      }, 800);
+        setIsLoading(false);
+        const form = e.target as HTMLFormElement;
+        form.reset();
+        alert("You've been added to the early access list.");
+      }, 1200);
     },
     []
   );
@@ -31,7 +32,7 @@ export default function Conversion() {
       <div className="corridor-narrow align-center">
         {/* ── CTA Heading — bookend with REVELATION ── */}
         <h2 className="type-display mb-6 text-center">
-          Build your brand in 10 minutes.
+          Request early access.
         </h2>
 
         {/* ── CTA Input — entry point, not a form ── */}
@@ -41,7 +42,7 @@ export default function Conversion() {
             type="email"
             name="email"
             className="cta-input text-center"
-            placeholder="Your email"
+            placeholder="Enter email for early access"
             required
             autoComplete="email"
             aria-label="Email address"
@@ -51,16 +52,16 @@ export default function Conversion() {
           <button
             id="cta-submit"
             type="submit"
-            className={`cta-button mt-3${isLoading ? " is-loading" : ""}`}
+            className={`cta-button mt-4${isLoading ? " is-loading" : ""}`}
             disabled={isLoading}
           >
-            {isLoading ? "Starting…" : "Start for free"}
+            {isLoading ? "Joining…" : "Coming Soon"}
           </button>
         </form>
 
-        {/* ── Zero-risk badges — footnotes, not moments ── */}
-        <p className="type-micro voice-whisper mt-4">
-          Free forever &nbsp;·&nbsp; No credit card &nbsp;·&nbsp; 10 minutes to your brand
+        {/* ── Subdued Early Access Note ── */}
+        <p className="type-micro voice-sub mt-4 uppercase tracking-widest">
+          Early access opening soon
         </p>
       </div>
     </section>

@@ -2,14 +2,14 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="corridor">
-        <div className="flex-col-center gap-3">
+        <div className="flex-col-center gap-3 opacity-60 hover:opacity-100 transition-opacity duration-300">
           {/* Mark */}
-          <span className="type-tamil-mark">
+          <span className="type-tamil-mark mb-2">
             கலை
           </span>
 
-          {/* Legal links */}
-          <nav className="type-micro voice-sub flex-wrap-center gap-4">
+          {/* Legal and Social Links */}
+          <nav className="type-micro flex-wrap-center gap-5">
             <a href="/terms" className="footer-link">
               Terms
             </a>
@@ -17,7 +17,7 @@ export default function Footer() {
               Privacy
             </a>
             <a
-              href="https://instagram.com/kalai.io"
+              href="https://www.instagram.com/interiors.d2v?igsh=ejgzbTJkZ2J6cmxq"
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
@@ -25,7 +25,7 @@ export default function Footer() {
               Instagram
             </a>
             <a
-              href="https://linkedin.com/company/kalai-io"
+              href="https://in.linkedin.com/company/d2v-interiors"
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
@@ -35,7 +35,7 @@ export default function Footer() {
           </nav>
 
           {/* Copyright */}
-          <p className="type-micro voice-sub">
+          <p className="type-micro mt-2">
             © 2026 kalai.io
           </p>
         </div>

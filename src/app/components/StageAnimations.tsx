@@ -535,7 +535,7 @@ function overlayMotion() {
 
   /* ── Grain: texture from DISRUPTION through PROOF ── */
   gsap.to(".overlay-grain", {
-    opacity: 0.03,
+    opacity: 0.15, /* Increased for structural tension */
     scrollTrigger: {
       trigger: "#disruption",
       start: "top 60%",

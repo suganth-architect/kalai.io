@@ -4,6 +4,7 @@ import Revelation from "./components/Revelation";
 import Proof from "./components/Proof";
 import Desire from "./components/Desire";
 import Conversion from "./components/Conversion";
+import Ecosystem from "./components/Ecosystem";
 import Footer from "./components/Footer";
 import StageObserver from "./components/StageObserver";
 import NinjaAnchor from "./components/NinjaAnchor";
@@ -40,6 +41,9 @@ export default function Home() {
 
       {/* Stage 6: Make action inevitable */}
       <Conversion />
+
+      {/* Stage 7: Ecosystem - Built by D2V */}
+      <Ecosystem />
 
       {/* End of scroll */}
       <Footer />
