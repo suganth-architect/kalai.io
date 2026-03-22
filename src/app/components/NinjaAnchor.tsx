@@ -6,13 +6,11 @@ import { useGLTF, Float, Preload } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useLenis } from "lenis/react";
 import * as THREE from "three";
+import { Model as LightSaberModel } from "./LightSaber";
 
 // The true GLTF Ninja/Lightsaber Model loaded dynamically
 function NinjaModel({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
   const group = useRef<THREE.Group>(null);
-  
-  // Automatically loads the client's new light_saber.glb
-  const { scene } = useGLTF("/models/light_saber.glb");
 
   useFrame((state) => {
     if (!group.current) return;
@@ -54,10 +52,9 @@ function NinjaModel({ scrollProgress }: { scrollProgress: React.MutableRefObject
   return (
     <group ref={group} dispose={null}>
       {/* 
-        Traverse the scene to ensure any imported materials meant to glow
-        are aggressively boosted above the Bloom luminance threshold (1.2)
+        The parsed version of the lightsaber with enhanced glowing materials.
       */}
-      <primitive object={scene} />
+      <LightSaberModel />
     </group>
   );
 }
