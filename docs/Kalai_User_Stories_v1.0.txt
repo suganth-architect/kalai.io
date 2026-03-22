@@ -1,0 +1,66 @@
+
+KALAI
+User Stories & Acceptance Criteria
+Complete user story backlog for V1 and V2 development
+
+Epic 1: Authentication & Workspace
+
+Epic 2: Onboarding
+
+Epic 3: Content Generation
+
+Epic 4: Publishing
+
+Epic 5: Autonomous Mode (V2)
+
+Epic 6: Lead Scoring & Analytics
+
+Epic 7: Billing & Payments
+
+End of Document — Kalai User Stories & Acceptance Criteria v1.0
+Story ID | User Story | Acceptance Criteria | Priority
+AUTH-01 | As a new user, I want to sign up with Google so I don't need to remember a password | Google OAuth completes, workspace created, redirected to onboarding. < 30 seconds total. | Must have
+AUTH-02 | As a new user, I want to sign up with email so I can use any email address | Email entered, magic link sent, click link → logged in and workspace created | Must have
+AUTH-03 | As an existing user, I want to log in and see my dashboard immediately | Login with Google or email. Dashboard loads in < 2 seconds. All brands visible. | Must have
+AUTH-04 | As an agency user, I want to switch between client workspaces | Workspace switcher in nav. Click workspace name → switch context. All data updates. | Should have (V2)
+AUTH-05 | As a user, I want to invite a team member to my workspace | Enter email, select role (admin/viewer), send invite. Invitee receives email, accepts, can access workspace. | Should have (V2)
+Story ID | User Story | Acceptance Criteria | Priority
+ONB-01 | As a new user, I want a guided conversation to set up my brand so I don't need marketing knowledge | Conversational UI. 6 steps. Completes in < 10 minutes on mobile. Progress saved at each step. | Must have
+ONB-02 | As a user, I want to upload my project photos during onboarding so Kalai understands my visual style | File upload (JPEG/PNG/HEIC, max 10MB each, up to 10 photos). Upload progress shown. Thumbnails displayed after upload. | Must have
+ONB-03 | As a user with a personal Instagram account, I want guidance to convert it to Business so I can connect to Kalai | System detects personal account via Graph API. Shows step-by-step guide with screenshots. Link to Instagram app to complete conversion. | Must have
+ONB-04 | As a user, I want to see my generated brand kit before committing | Logo variants (3), color swatches, voice description shown. Can regenerate any element. Approve to proceed. | Must have
+ONB-05 | As a user, I want to see my 30-day content calendar before it goes live | Calendar view with all 30 drafted posts. Can browse, edit, or delete. 'Launch calendar' or 'Review each post first' options. | Must have
+ONB-06 | As a user, I want to be able to resume onboarding if I leave halfway | All progress saved to Supabase. Return to kalai.io → resume from where I left off. Works across devices. | Must have
+Story ID | User Story | Acceptance Criteria | Priority
+CONT-01 | As a user, I want to generate a post from a brief so I don't have to write captions | Enter topic/brief (50–200 chars). Select platform. Click Generate. See caption + hashtags + image in < 30 seconds. | Must have
+CONT-02 | As a user, I want to generate posts for multiple platforms at once | Select multiple platforms. One brief → platform-specific variations generated simultaneously. | Must have
+CONT-03 | As a user, I want to regenerate the image if I don't like the first result | 'Regenerate image' button on each post. New image generated in < 15 seconds. Original kept as alternative. | Must have
+CONT-04 | As a user, I want to regenerate the copy if it doesn't sound like me | 'Regenerate copy' with optional direction ('make it more casual' / 'shorter' / 'add a CTA'). New copy generated. | Must have
+CONT-05 | As a user, I want the AI to remember my brand voice after I approve posts | After approving posts, captions embedded and added to Brand Brain. Next generations feel progressively more on-brand. | Must have
+CONT-06 | As a user, I want posts with Tamil or Hindi text to render correctly in the image | Tamil/Hindi text specified in brief → Nano Banana Pro generates image with legible script. OCR validation confirms accuracy. | Must have
+CONT-07 | As a user, I want to manually edit a generated post before publishing | Inline text editor for caption. Image editor (basic: crop, adjust position). Changes saved without regenerating. | Should have
+Story ID | User Story | Acceptance Criteria | Priority
+PUB-01 | As a user, I want to schedule a post for a specific time | Date/time picker. Time shown in IST. Scheduled post visible in calendar with status 'Scheduled'. | Must have
+PUB-02 | As a user, I want Kalai to suggest the best time to post | 'Optimal time' toggle. System suggests time based on platform defaults (first 30 days) or account analytics. | Should have
+PUB-03 | As a user, I want to publish to Instagram and Google Business simultaneously | Multi-platform selector per post. Both publish in the same Inngest job. Both platform_post_ids stored. | Must have
+PUB-04 | As a user, I want to be notified if a post fails to publish | Sentry captures error. Email sent: 'Your post scheduled for [time] failed to publish. Here's why: [error].' Post status = failed. | Must have
+PUB-05 | As a user, I want to publish to Google Business Profile as a STANDARD, OFFER, or EVENT post | GBP post type selector. For EVENT: date fields shown. For OFFER: terms field shown. | Must have
+PUB-06 | As a user, I want to see my content calendar in a monthly view | Calendar shows all scheduled + published + draft posts. Colour-coded by status. Click any post to view/edit. | Must have
+PUB-07 | As a user, I want my Instagram posts to support carousel format | Up to 10 images uploadable per post. Each image shown in slide preview. Published as Instagram carousel. | Should have
+Story ID | User Story | Acceptance Criteria | Priority
+AUTO-01 | As a user, I want to enable autonomous mode so Kalai posts without me logging in daily | Toggle in settings. When ON: posts prepared by AI, push notification sent 4 hours before scheduled time. | Must have (V2)
+AUTO-02 | As a user, I want to approve a post with one tap from my phone | Push notification received. Tap → opens post preview. Approve or Reschedule. Takes < 10 seconds. | Must have (V2)
+AUTO-03 | As a user, I want to set an auto-approve timer so approved posts go out even if I miss the notification | Settings: 'If I don't respond in [2h/4h/8h], auto-publish.' Timer shown in notification. | Should have (V2)
+AUTO-04 | As a user, I want the AI to reply to simple DMs so I don't miss enquiries | DM classified as FAQ or generic → AI reply drafted → if autonomous mode ON and DM is FAQ type → sent automatically. | Must have (V2)
+AUTO-05 | As a user, I want urgent enquiries to always notify me regardless of autonomous settings | DM with pricing/buying intent → immediate push notification → does NOT auto-reply → waits for human. | Must have (V2)
+Story ID | User Story | Acceptance Criteria | Priority
+LEAD-01 | As a user, I want to see a list of my hottest leads this week | Leads tab shows top 10 leads by score. Each shows: name, platform, score, last interaction, signal breakdown. | Must have (V2)
+LEAD-02 | As a user, I want to understand why someone has a high lead score | Click lead → see score breakdown: 'DM sent (+40), Pricing question asked (+30), Commented twice (+20)'. | Should have (V2)
+LEAD-03 | As a user, I want to receive my Sunday digest every week | Email sent every Sunday at 8am IST. Shows: posts published, best performer, new leads, pipeline estimate. | Must have (V2)
+LEAD-04 | As a user, I want to see which post drove the most leads | Analytics view: post performance table sorted by lead-score-impact (not just likes). Filter by date range. | Should have (V2)
+LEAD-05 | As a user, I want to mark a lead as 'contacted' or 'converted' | Click lead → update status dropdown. Notes field. Conversion updates pipeline value in analytics. | Should have (V2)
+Story ID | User Story | Acceptance Criteria | Priority
+BILL-01 | As a free user, I want to upgrade to Growth with UPI payment | Plan comparison shown. Select Growth (annual). Razorpay modal opens with UPI as first option. Payment completes. Plan upgrades instantly. | Must have
+BILL-02 | As a user, I want to see a GST invoice for my payment | Invoice generated by Razorpay. Downloadable from billing section. Shows company name, GSTIN (if entered), GST amount. | Must have
+BILL-03 | As a user, I want to cancel my subscription without calling anyone | Settings → Billing → Cancel subscription. Confirmation dialog. Plan downgrades at end of billing period. | Must have
+BILL-04 | As a user whose payment failed, I want a 3-day grace period | Payment.failed webhook → email sent → plan remains active for 72 hours → second payment attempt. If still fails: downgrade. | Must have

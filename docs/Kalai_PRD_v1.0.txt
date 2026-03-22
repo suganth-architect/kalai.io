@@ -1,0 +1,400 @@
+
+KALAI
+kalai.io  —  கலை
+Product Requirements Document
+Autonomous AI Marketing Agent for Indian SMBs
+
+
+1. Executive Summary
+Kalai (kalai.io) — from the Tamil word கலை meaning 'Art' — is an autonomous AI marketing agent built for Indian small and medium business owners who are not marketers. It handles the entire digital marketing lifecycle: brand creation, content generation, multi-platform publishing, engagement automation, lead scoring, and ROI tracking — without requiring the user to possess any marketing knowledge.
+
+The product is born from a single observation: 82–95% of Indian SMBs operate with no systematic, paid, software-driven social media strategy. The incumbent tools (Hootsuite, Predis, Ocoya, Zoho Social) are fundamentally copilots — they require a skilled human to operate them. Kalai is the first autonomous agent in this category. The user describes their business once. Kalai builds their brand identity, creates their content calendar, publishes across platforms, responds to engagement, and reports business outcomes — all without requiring daily human input.
+
+
+
+1.1 Key Metrics & Market Opportunity
+
+
+2. Product Overview
+2.1 Product Name & Identity
+Product Name: Kalai
+Tamil Origin: கலை — meaning Art, the arts, creative craft
+Domain: kalai.io (registered)
+Tagline: Your art deserves an audience. Kalai makes sure it finds one.
+Positioning: Not a scheduler. Not a template tool. The first AI that runs your entire marketing presence — autonomously.
+
+2.2 Core Value Proposition
+
+2.3 Primary User Personas
+Persona 1: The Independent Architect / Interior Designer
+Profile: 28–45 years old. Formally trained. Runs a boutique firm of 1–10 people. Does exceptional work. Gets all clients through referrals.
+Pain: Spends 10+ hours/week manually posting on Instagram instead of doing billable work. Lost a project to a weaker competitor with a better Instagram presence.
+Trigger to buy: Loss aversion ("they chose a competitor because of their feed") or growth bottleneck ("I can't take more clients because marketing takes too much time").
+Device: Mix of desktop (for project work) and mid-range Android phone (for Instagram browsing).
+
+Persona 2: The Restaurant/Food Business Owner
+Profile: 30–55 years old. Runs 1–3 restaurant locations. Deeply skilled in food and hospitality. Has zero interest in social media.
+Pain: Has a Google Maps listing that gets 0 updates. Customers can't find recent photos or menus. Paid an agency ₹8,000/month for 6 months and got stock photos.
+Trigger to buy: Sees a competitor restaurant with active social media and a fully updated Google Business Profile getting more walk-ins.
+
+Persona 3: The Solo Professional / Gig Worker
+Profile: Yoga instructor, photographer, consultant, freelance designer. Works from their phone. Has a small but engaged local following.
+Pain: Teaches or works 6–8 hours a day. By evening has no energy for content creation. Inconsistent posting leads to slow audience growth.
+Trigger to buy: Realizes their growth has flatlined due to inconsistent posting. Wants someone to handle it.
+
+Persona 4: The Digital Marketing Agency
+Profile: Small agency managing 10–25 client accounts. Team of 3–8 people. Spends 70% of time on repetitive content creation.
+Pain: Can't scale because content production is a bottleneck. Needs to deliver more value (strategy) but gets bogged down in execution.
+Trigger to buy: Needs to double client capacity without doubling headcount.
+
+
+3. Feature Requirements
+3.1 Feature Modules Overview
+
+3.2 Module 1: Onboarding Conversation (V1)
+The onboarding is not a form. It is a structured conversational flow powered by Claude Sonnet. The AI asks specific questions that extract the brand story, visual identity, content strategy, and campaign goals — without the user needing any marketing knowledge.
+
+3.2.1 Conversation Flow
+Business Introduction: "Tell me your business name and what you do in 2–3 sentences."
+Work Evidence: "Show me 3 projects or pieces of work you're most proud of. Upload photos or links."
+Best Client Story: "Describe your best client. What made them great to work with?"
+Differentiation: "What's the one thing you wish every potential client understood about your work before contacting you?"
+Goal Setting: "What's your #1 business goal for the next 90 days? (More leads / Build reputation / Launch new service / Grow followers)"
+Platform Connection: "Connect your Instagram, LinkedIn, and Google Business Profile. We'll guide you if you don't have a Business account."
+
+3.2.2 Outputs Generated from Onboarding
+Brand Brain (stored in pgvector): voice model, visual DNA, audience profile, goal state
+Brand Kit: Primary color, secondary color, accent color, typography recommendation
+Logo variants: 3 options generated via Nano Banana Pro (Gemini 3 Image API)
+Content pillars: 5 topic categories derived from the business story
+30-day content calendar: Posts drafted, visuals generated, optimal timing assigned
+First campaign brief: Tied to the stated 90-day goal
+
+3.2.3 Technical Requirements
+Total onboarding time: Under 10 minutes on a mobile device
+Image upload: Support JPEG, PNG, HEIC up to 10MB per image
+Instagram Business Account check: If personal account detected, provide guided conversion walkthrough
+Facebook Page link check: Required for Instagram API — guided setup if missing
+Offline resilience: Save progress to Supabase at each step, allow resume on different device
+
+3.3 Module 2: Brand Genesis (V1)
+3.3.1 Logo Generation
+Model: Nano Banana Pro via Gemini API (gemini-3-pro-image-preview)
+Prompt strategy: Business name + industry + brand adjectives → 3 logo variants (wordmark, icon, combination mark)
+Output: PNG with transparent background, minimum 1024×1024px
+User control: Regenerate any variant, approve one, mark others as alternatives
+Storage: Cloudflare R2 — permanent storage tied to brand profile
+
+3.3.2 Brand Color System
+Primary color: Generated from industry + adjectives (architecture → slate blues; restaurants → warm earth tones)
+Secondary + accent: Complementary palette generated by Claude
+Output: Hex codes, RGB values, usage guidelines
+Tamil/regional awareness: Colors culturally appropriate for Indian context
+
+3.3.3 Brand Voice Model
+Extracted from: Answers to onboarding questions, tone of uploaded project descriptions
+Stored as: Vector embedding in Supabase pgvector
+Used by: Every Claude API call for post copy generation — queried at call time
+Tone spectrum: Professional / Warm-Professional / Conversational / Playful (user-selectable override)
+
+3.4 Module 3: Content Factory (V1)
+3.4.1 Post Generation Pipeline
+Input: Campaign brief OR content pillar OR user-entered topic → Output: Platform-optimized post set
+
+
+3.4.2 Visual Generation
+Primary model: Nano Banana Pro (Gemini 3 Pro Image) — best for Tamil/Hindi text in images, Indian architectural content, Indian food photography
+Fallback model: Flux Dev via Replicate — for non-text, purely photorealistic visuals
+Brand consistency: Every generated image queries the Brand Brain for colors, style preferences, previous visual patterns
+Text in image: Tamil and Hindi text rendered correctly — platform-appropriate typography
+Watermark: Free tier images carry subtle "Powered by Kalai" badge — removable on paid plans
+
+3.4.3 Copy Generation
+Model: Claude Sonnet 4.6 (claude-sonnet-4-6)
+Context injected: Brand voice embedding from pgvector, content pillar, campaign goal, platform, recent performance data
+Quality controls: No generic phrases, no emojis unless user-approved, correct industry terminology
+Hashtag generation: Platform-appropriate, niche-specific, mixed popularity tiers
+Languages: English primary, Tamil/Hindi support for local market posts
+
+3.5 Module 4: Multi-Platform Publisher (V1)
+3.5.1 Platform Integrations
+
+3.5.2 Publishing Engine
+Job queue: Inngest (serverless) — no BullMQ, no Railway workers
+Scheduling precision: Minute-level scheduling via Inngest delayed functions
+Failure handling: Auto-retry 3 times with exponential backoff, alert user after final failure
+Rate limiting: Per-platform rate tracking stored in Supabase, pre-publish limit checks
+Instagram 25/day guard: Counter resets at midnight UTC, queues overflow to next day
+Approval flow: Every post passes through user approval before publishing (V1). Autonomous mode adds one-tap mobile approval (V2).
+
+3.6 Module 5: Smart Scheduler (V1)
+Optimal posting time: Calculated per platform per account using engagement history (first 30 days uses industry defaults)
+Content calendar: Visual week/month view, drag-drop to reschedule
+Campaign cadence: Automated — based on campaign goals. "Get 100 leads" → daily posts for 30 days. "Build brand" → 3x/week.
+Evergreen recycling: High-performing posts automatically queued for re-use at 90-day interval
+
+3.7 Module 6: Autonomous Mode (V2)
+Autonomous Mode is the product's defining feature. One toggle. Kalai prepares all content, posts at optimal times, responds to engagement — without the user needing to log in daily.
+
+
+Notification: Push notification to mobile app → user taps Approve or Reschedule
+Auto-approve timer: Optional — if user does not respond in X hours, post automatically publishes (V2, user-configurable)
+DM agent: Reads all incoming DMs, generates brand-voice reply, sends after user approval OR auto-sends for FAQ-type messages
+Comment agent: Reads new comments, responds to questions and compliments, flags negative sentiment for human review
+Lead escalation: High-intent signals ("how much does this cost?") immediately notified to user regardless of auto-approve setting
+
+3.8 Module 7: AI Engagement Agent (V2)
+3.8.1 DM Classification System
+
+3.8.2 Lead Scoring Model
+Lead scores are calculated from signals available through Meta's API — no per-user behavioral tracking that violates platform terms.
+Signal: DM sent (+40 points)
+Signal: Pricing question asked (+30 points)
+Signal: Comment with buying intent (+25 points)
+Signal: Multiple comments in 7 days (+20 points)
+Signal: Bio link click via tracked URL (+35 points)
+Signal: Story reply (+15 points)
+Decay: Score decays 10% per week of inactivity
+Threshold: Score >70 = hot lead, notified immediately. Score 40–70 = warm, shown in weekly digest.
+
+
+4. Non-Functional Requirements
+4.1 Performance
+
+4.2 Scalability
+Architecture: Serverless-first (Vercel + Inngest) — scales to 0 at night, handles traffic spikes automatically
+Database: Supabase PostgreSQL with connection pooling via PgBouncer
+Storage: Cloudflare R2 — unlimited, zero egress cost
+AI cost scaling: Per-user AI cost estimated at ₹50–150/month. Pricing model maintains 70%+ gross margin even at scale.
+Target: Handle 10,000 active users without architecture changes
+
+4.3 Reliability
+Uptime target: 99.5% monthly (Vercel SLA)
+Post failure alerting: Sentry captures all failed publish jobs within 60 seconds
+Data backup: Supabase daily automated backups, 30-day retention
+Graceful degradation: If AI generation fails, fall back to previously approved content templates
+
+4.4 Security
+Authentication: Supabase Auth with Google OAuth, magic links, email/password
+API keys: All third-party keys stored in Vercel environment variables, never in client code
+Social tokens: OAuth tokens stored encrypted in Supabase, row-level security per workspace
+Multi-tenancy isolation: Supabase RLS policies ensure complete data isolation between workspaces
+HTTPS: Enforced everywhere. No HTTP in production.
+
+4.5 Mobile Requirements
+Platform: iOS 15+ and Android 8.0+ (API level 26+)
+Budget phone support: Fully functional on 3GB RAM Android devices
+Offline: View existing content calendar and analytics without internet connection
+Push notifications: Expo Notifications for post approval alerts, lead notifications, Sunday digest
+PWA: Next.js web app is mobile-responsive from V1 launch — serves as V1 mobile experience before native app ships
+
+
+5. Pricing & Monetisation Strategy
+5.1 Pricing Tiers
+
+5.2 Pricing Psychology (India-Specific)
+Annual billing primary: Bypasses monthly subscription fatigue — the #1 psychological barrier for Indian SMBs
+Left-digit effect: ₹9,999 not ₹10,000. ₹29,999 not ₹30,000.
+Free forever > 14-day trial: Indian B2B decisions take longer than 14 days. Free forever converts better.
+GST-inclusive display: Show ₹9,999 as ₹9,999 incl. GST — not ₹8,474 + GST which causes checkout shock
+UPI first: Razorpay integration. UPI shown before cards. Never show USD pricing to Indian users.
+
+
+
+6. User Journeys
+6.1 Primary Journey: First-Time User (Non-Marketer)
+
+Total time from signup to first published post: Under 10 minutes on a mid-range Android phone.
+
+6.2 Trigger Journey: Converting Free to Paid
+Free user publishes 5 posts in month 1. Receives a DM: 'How much does a kitchen redesign cost?'
+Kalai shows: 'You have 1 new potential lead. Upgrade to Growth to see their profile and auto-reply.'
+User upgrades to Growth ₹9,999/year via UPI. Takes 30 seconds.
+Lead scoring activates. Engagement agent enabled. User receives Sunday digest.
+Sunday digest shows: '2 hot leads, best post got 1,247 views, estimated pipeline value: ₹3.5L'
+User shares the digest screenshot. Viral referral loop starts.
+
+
+7. Success Metrics & KPIs
+7.1 Product Metrics
+
+7.2 Business Metrics
+
+
+8. Constraints, Assumptions & Risks
+8.1 Technical Constraints
+Instagram API: 25 posts per user per 24 hours. Design scheduler to never approach this limit.
+Instagram DM API: Requires Meta Advanced Access review. Apply on Day 1 of development.
+Instagram Business Account mandatory: Personal accounts cannot use Graph API. Onboarding must detect and guide conversion.
+WhatsApp posting: No API exists for scheduling posts to WhatsApp profiles. Removed from scope permanently.
+Koo integration: No official API. Removed from scope permanently.
+Background tasks (mobile): Expo background tasks run on OS-controlled schedule. Minimum ~15 minutes on Android. Acceptable for Kalai's use case.
+
+8.2 Business Risks & Mitigations
+
+8.3 Key Assumptions
+Users have or can be guided to create Instagram Business accounts linked to Facebook Pages.
+Users can provide at least 3 photos of their work during onboarding (quality of output depends on input quality).
+Google Business Profile API remains free and stable through 2026–2027.
+Indian SMBs will accept annual billing model when presented with clear value and UPI payment.
+Meta Advanced Access review takes 1–3 days as per current 2025 reports.
+
+
+9. Release Plan
+9.1 Version Roadmap
+
+9.2 V1 Build Checklist
+Repository setup: Turborepo monorepo with /apps/web (Next.js) and /packages/shared
+Supabase project: Database schema, Auth config, pgvector extension, RLS policies
+Environment: Vercel project, Cloudflare R2 bucket, all API keys configured
+Onboarding flow: Conversational UI, brand extraction, account connection
+Brand genesis: Logo generation (Nano Banana Pro), color system, voice model
+Post generation: Copy (Claude) + visual (Nano Banana Pro) + multi-format export
+Publisher: Instagram + LinkedIn + GBP API integration, Inngest scheduler
+Content calendar: Week/month view, manual edit, approve flow
+Payments: Razorpay integration, free/paid plan gating, UPI checkout
+Landing page: Mobile-responsive, trigger-moment copy, free signup CTA
+Error monitoring: Sentry configured, failed post alerts active
+Apply for Meta Advanced Access: Instagram Messaging API (do this on Day 1)
+
+
+10. Open Questions & Decisions Pending
+
+Appendix A: Competitive Positioning Summary
+
+End of Document — Kalai PRD v1.0
+Field | Value
+Document Version | 1.0
+Status | Final — Approved for Development
+Product | Kalai — Autonomous AI Marketing Agent
+Domain | kalai.io
+Author | Suganth (Founder, D2V Architectural Consultancy)
+Date | March 2026
+Classification | Confidential & Proprietary
+Tech Stack | Next.js 14, Supabase, Inngest, Claude API, Nano Banana Pro, Gemini Flash, React Native + Expo
+Target Market | Indian SMBs — Architects, Designers, Restaurants, Solo Professionals
+Vision: Every person who makes something valuable deserves to be found. Kalai makes sure they are.
+Mission: To give every Indian professional and small business the marketing power of a dedicated agency — at the cost of a phone bill — with zero marketing knowledge required.
+Metric | Value | Source
+Indian Social Media Analytics Market (2024) | USD 523.1 Million | Grand View Research
+CAGR (2024–2030) | 42% | Grand View Research
+Projected Market Size (2030) | USD 4.28 Billion | Grand View Research
+Indian SMBs (Total) | 75 Million | Zinnov
+SMBs with No Paid Marketing Software | 82–95% | India SME Forum / Waldenu
+Target Vertical — Architects (India) | 122,971 – 145,499 | Council of Architecture
+Target Vertical — Interior Designers | USD 23.6B market | Credence Research
+Target Vertical — Restaurants | 500,000+ | NRAI 2024 Report
+Target Vertical — Gig Professionals | 12–15 Million | ILO / Skydo
+Mobile Internet Usage (India) | 68% of web traffic | Statcounter 2024
+Competitor Approach | Kalai Approach
+Copilot — requires human to pilot | Autonomous agent — runs itself
+Built for marketers | Built for non-marketers
+Multiple tools required (logo, design, post, schedule, reply) | Single platform: zero to live campaign
+USD pricing, monthly subscription | INR pricing, annual billing, UPI
+Generic output — looks AI-generated | Brand Brain trained on user's own work
+Vanity metrics (likes, reach) | Business outcomes (leads, enquiries, pipeline value)
+Module | Description | V1 | V2 | V3
+Brand Genesis | Logo, color palette, typography, voice from onboarding conversation | ✓ |  | 
+Onboarding Conversation | Guided AI conversation to extract brand story, goals, audience | ✓ |  | 
+Content Factory | Post copy + visuals for all platforms from a single brief | ✓ |  | 
+Multi-Platform Publisher | Publish to Instagram, Facebook, LinkedIn, Google Business Profile | ✓ |  | 
+Smart Scheduler | Predictive posting times, content calendar, campaign cadence | ✓ |  | 
+Autonomous Mode | One-tap approval flow, AI posts without constant human input |  | ✓ | 
+AI Engagement Agent | Reads DMs and comments, replies in brand voice, escalates leads |  | ✓ | 
+Lead Scoring Engine | Scores followers by engagement signals, surfaces hot leads |  | ✓ | 
+Sunday Digest | Weekly email: leads, top post, pipeline value, campaign performance |  | ✓ | 
+Content Repurposer | Upload video/blog/podcast → 20+ platform-optimized posts |  |  | ✓
+YouTube Shorts Publisher | AI video generation via Veo API, auto-post to YouTube Shorts |  |  | ✓
+GA4 Attribution | Connect posts → website clicks → contact form fills → leads |  |  | ✓
+Agency White-Label | Run unlimited client brands under custom dashboard |  |  | ✓
+Mobile App (iOS + Android) | One-tap approvals, DM inbox, lead alerts, performance glance |  | ✓ | 
+Platform | Format | Image Size | Copy Limit | Special Requirements
+Instagram Feed | Square image + caption | 1080×1080px | 2,200 chars | Hashtag block (5–10 tags)
+Instagram Stories | Vertical image/graphic | 1080×1920px | N/A | CTA sticker text
+Instagram Carousel | 2–10 slides | 1080×1080px each | 300 chars/slide | Sequential narrative
+Facebook Post | Landscape image + text | 1200×630px | 63,206 chars | Link preview support
+LinkedIn Post | Portrait image + text | 1200×1500px | 3,000 chars | Professional tone mandatory
+Google Business Profile | Landscape image + update | 400×300px min | 1,500 chars | Call-to-action button
+YouTube Shorts (V3) | Vertical video | 1080×1920px | 100 chars title | AI-generated via Veo API
+Platform | API | Posting | Analytics Read | DM/Comment Read | Requirement
+Instagram | Meta Graph API v21 | 25 posts/24hrs | Yes | V2 (Advanced Access) | Business account + FB Page
+Facebook Page | Meta Graph API v21 | Unlimited | Yes | Yes | Facebook Page required
+LinkedIn Personal | LinkedIn API v2 | Yes | Basic | No | LinkedIn Developer App
+LinkedIn Company | LinkedIn API v2 | Yes | Basic | No | Company Page admin access
+Google Business | GBP API (Google) | Yes | Yes | Review responses | Google OAuth
+YouTube Shorts | YouTube Data API v3 | 6 uploads/day free | Basic | No | YouTube channel required
+ToS Compliance Note: Autonomous mode means Kalai prepares posts and notifies the user via push notification for one-tap approval. This is fully compliant with Meta, LinkedIn, and Google's API terms. True no-review posting is available only on Google Business Profile and LinkedIn, where the platforms permit it. Instagram and Facebook always require the user's explicit approval before publishing.
+DM Type | Kalai Action | Human Required?
+FAQ ("What are your hours?") | Auto-reply using brand FAQ | No
+Pricing enquiry | Reply with pricing overview + CTA to contact | Optional review
+Complaint / negative sentiment | Empathetic reply + flag for human review | Yes
+Warm lead (repeat engagement) | Personalized reply + add to lead pipeline | Notified immediately
+Spam / irrelevant | Ignore, log for analytics | No
+Metric | Requirement | Notes
+Page Load (web) | < 2 seconds on 4G mobile | Core Web Vitals target: LCP < 2.5s
+Post Generation | < 30 seconds for copy + image | Claude + Nano Banana Pro parallel calls
+Scheduler Accuracy | +/- 2 minutes of target time | Inngest delayed function precision
+Mobile App Launch | < 3 seconds cold start | React Native + Expo optimization
+Onboarding Completion | < 10 minutes total | Including photo uploads and account connections
+API Response (internal) | < 500ms p95 | Supabase + Vercel Edge Functions
+Image Generation | < 15 seconds per image | Nano Banana Pro via Gemini API
+Tier | Price | Billing | Target User | Key Limits
+Free Forever | ₹0 | Always free | Freelancers, trial users | 5 posts/month, 2 platforms, watermarked visuals, "Powered by Kalai" badge
+Growth | ₹9,999 | Annual (₹833/mo effective) | SMBs, professionals | Unlimited posts, 5 platforms (IG+FB+LI+GBP+YT), AI engagement agent, lead scoring, Sunday digest
+Agency | ₹29,999 | Annual | Digital agencies | Unlimited client brands, white-label dashboard, client approval flows, priority AI, API access
+Research finding: A pricing strategy gaining traction in India: ₹49 upfront to lock in a discounted annual rate creates a micro-commitment that filters low-intent users while tapping into the cultural affinity for 'deals'. Consider testing this as a V2 experiment.
+Step | Action | Kalai Does | Time
+1 | User visits kalai.io on mobile | Landing page loads in <2s. Single CTA: 'Start for free' | 0 min
+2 | Email/Google signup | Supabase Auth. No credit card. | 1 min
+3 | Onboarding conversation begins | Claude asks: 'Tell me your business name and what you do' | 1 min
+4 | User uploads 3 project photos | Nano Banana Pro analyzes visual style. Brand DNA extracted. | 2 min
+5 | User states 90-day goal | Campaign strategy generated. Content pillars defined. | 1 min
+6 | Connect Instagram (guided) | If personal account, guided Business account conversion. OAuth flow. | 2 min
+7 | Brand kit generated | Logo (3 variants), colors, voice description shown for review. | 30 sec
+8 | First month calendar shown | 30 posts drafted. User can browse or click 'Launch calendar' | 30 sec
+9 | User approves first post | Post published to Instagram + Google Business Profile | 30 sec
+10 | App installed (prompted) | PWA install prompt. Native app install for V2. | 30 sec
+Metric | V1 Target (Month 4) | V2 Target (Month 8) | V3 Target (Month 12)
+Registered Users | 500 | 2,000 | 10,000
+Paying Users | 50 | 300 | 1,500
+MRR (Annualized) | ₹4.2L | ₹25L | ₹1.25Cr
+Free-to-Paid Conversion | 5% | 8% | 12%
+Monthly Churn | <8% | <5% | <3%
+Onboarding Completion Rate | >70% | >80% | >85%
+Posts Published via Kalai (monthly) | 2,500 | 25,000 | 200,000
+NPS Score | >40 | >55 | >65
+Metric | Definition | Target
+Payback Period | Months to recover CAC | < 3 months
+LTV:CAC Ratio | Lifetime value vs. acquisition cost | > 5:1
+Gross Margin | Revenue minus AI/infra costs | > 72%
+Break-Even Users | Users needed to cover fixed infra (~₹5,500/mo) | 6 paying users
+GBP Lead Attribution Rate | % of users who trace a lead to GBP post | > 30% of paid users by Month 6
+Risk | Likelihood | Impact | Mitigation
+Meta API policy change | Medium | High | Multi-platform strategy. Google Business Profile as primary ROI channel reduces Meta dependency.
+AI cost inflation | Low | Medium | Gemini Flash for bulk tasks (6x cheaper than Claude). Per-user cost cap with plan limits.
+User trust in AI output | High | High | Human approval always available. Brand Brain shows users their own style reflected. D2V as live case study.
+Low Indian SaaS conversion | Medium | High | Free forever tier. Annual billing. UPI. GST-inclusive pricing. Trigger-moment-based copy.
+Competitor response (Zoho Social) | Medium | Medium | Autonomy is our moat. Zoho is a dashboard; we're an agent. They cannot pivot without rebuilding their entire product.
+Slow organic growth | Medium | Medium | "Powered by Kalai" watermark on free posts creates viral loop. Referral program in V2.
+Version | Timeline | Key Features | Success Gate
+V1 — Foundation | Weeks 1–4 | Onboarding conversation, brand genesis, post generation, Instagram + LinkedIn + GBP publishing, content calendar, free + paid tiers, Razorpay/UPI | 10 paying beta users
+V2 — Autonomous | Month 2–3 | Autonomous mode (one-tap approvals), AI DM agent, engagement inbox, lead scoring, Sunday digest, push notifications, mobile PWA hardening | 50 paying users, ₹4L MRR
+V3 — Intelligence | Month 4–5 | GA4 attribution, YouTube Shorts via Veo API, content repurposer (Whisper), Facebook Groups, agency white-label, React Native mobile app (App Store) | 200 paying users, ₹20L MRR
+V4 — Scale | Month 6+ | Tauri desktop app (agency demand only), advanced analytics, API access tier, international expansion prep | 1,000 paying users
+# | Question | Decision Needed By | Impact
+1 | Should the free tier post watermark be opt-out (user can remove for a credit) or hard-locked to paid plans? | Before V1 launch | Affects viral growth vs. brand perception
+2 | Should agency white-label be a separate product (kalai.io/agency) or a tier within kalai.io? | Before V3 build | Affects pricing structure and go-to-market
+3 | What is the exact Auto-Approve timer for autonomous mode? (6 hours? 12 hours? User-configurable?) | Before V2 build | Affects autonomous mode design and Meta compliance
+4 | Should Kalai offer a ₹49 unlock experiment (pay ₹49 to lock in annual price) as tested by other Indian SaaS? | Before V1 launch | Could significantly improve free-to-paid conversion
+5 | Will Kalai target Tamil Nadu / South India first for marketing, or pan-India from day 1? | Before landing page copy is finalized | Affects ad targeting, language mix, initial sales outreach
+Capability | Predis | Ocoya | Zoho Social | Hootsuite | Kalai
+Logo + brand identity from zero | No | No | No | No | Yes — V1
+Goal-driven campaign planning | No | No | Partial | Partial | Yes — V1
+Tamil/Hindi text in generated images | No | No | No | No | Yes — Nano Banana Pro
+Google Business Profile posting | No | No (promised) | No | No | Yes — V1
+Autonomous mode (one-tap approve) | No | No | No | No | Yes — V2
+AI DM + comment replies | No | No | Partial | Partial (Heyday) | Yes — V2 (brand-aware)
+Lead scoring from social signals | No | No | No | No | Yes — V2
+Business outcome tracking (₹ pipeline) | No | No | No | No | Yes — V3
+Annual INR billing with UPI | No | No | Partial | No | Yes — V1
+Built for non-marketers | No | No | No | No | Yes — core design principle

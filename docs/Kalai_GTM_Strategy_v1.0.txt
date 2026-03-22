@@ -1,0 +1,98 @@
+
+KALAI
+Go-to-Market Strategy
+Launch plan, positioning, acquisition channels, and growth loops
+
+1. Positioning & Messaging
+
+1.1 The Three Trigger-Moment Messages
+All Kalai messaging speaks to one of the three proven trigger moments that cause non-marketers to pay for marketing software:
+
+
+1.2 Vertical-Specific Positioning
+
+
+2. Launch Strategy — Architects First
+Kalai launches in a single vertical: architects and interior designers in South India (Chennai, Bangalore, Hyderabad). This is not a limitation — it is a deliberate moat-building strategy. Suganth is an architect. D2V is the first case study. The community is small enough to own completely and large enough to generate word-of-mouth.
+
+2.1 Pre-Launch (Before V1 Ships)
+Talk to 10 architects and interior designers personally. Use the 5-question interview script. Refine onboarding based on their language.
+Build a waitlist at kalai.io with a simple landing page. Goal: 200 signups before launch.
+Document D2V's Kalai journey publicly: 'We're building a marketing tool and we're our own beta user.' Post weekly on LinkedIn and Instagram.
+Join and contribute to architecture communities: CoA forums, ArchDaily India communities, design-focused Facebook groups.
+Apply for Meta Advanced Access for Instagram DM API on Day 1.
+
+2.2 V1 Launch (Week 4)
+
+2.3 Paid Acquisition (Month 2–3, after PMF signals)
+
+
+3. Growth Loops
+3.1 Viral Loop — Powered by Kalai Badge
+Every post published by a free-tier user carries a subtle 'Powered by Kalai' badge in the visual (bottom right corner, unobtrusive). Every post is a free impression. If a free user publishes 5 posts/month across 2 platforms, that's 10 branded impressions/month reaching their followers.
+
+3.2 Referral Loop
+
+3.3 Content Loop
+Kalai's Sunday digest is the most shareable content Kalai creates — because it shows real business outcomes. '3 leads from 4 posts. Best post: 1,247 views. Estimated pipeline: ₹3.5L.' Users share this. It becomes social proof.
+Design Sunday digest to be screenshot-friendly (mobile dimensions)
+Include a 'Share your results' CTA in every digest email
+Create a #KalaiResults hashtag for users to share wins
+
+
+4. Pricing & Conversion Strategy
+4.1 Free-to-Paid Conversion Flow
+
+4.2 Pricing A/B Tests (Launch Week)
+
+
+5. Success Metrics & Review Cadence
+
+
+End of Document — Kalai Go-to-Market Strategy v1.0
+Core Positioning: Kalai is the first autonomous AI marketing agent for Indian professionals and small businesses. Not a scheduler. Not a template tool. The AI that runs your marketing so you can focus on your craft.
+Trigger | Headline | Supporting Copy | CTA
+Loss Aversion | Your work is better. Their feed found them first. | You lost a project to a weaker competitor because their Instagram looked better. That ends today. Kalai builds your brand and posts for you — automatically. | Start for free
+Growth Bottleneck | 10 hours a week on Instagram. That's ₹2L in lost billings. | Every hour you spend on content is an hour you're not earning. Kalai handles all of it. You just approve with one tap. | See how it works
+ROI Clarity | Priya got 3 enquiries from her last 4 posts. | Not likes. Not reach. Actual leads. Kalai shows you which posts drive real business — and makes more of those. | Get your first leads
+Vertical | Primary Pain | Kalai Hook
+Architects / Designers | Losing projects to inferior firms with better Instagram | 'Your portfolio is your best salesperson. Kalai makes sure the world sees it.'
+Restaurants | Outdated Google Maps listing, no regular social content | 'Every week, Kalai posts your specials, photos, and updates to Google and Instagram. While you cook.'
+Solo Professionals | No time for content creation after full working day | 'You work 8 hours. Kalai markets for 24. Set it up once. It runs forever.'
+Digital Agencies | Content creation bottleneck preventing scale | 'Double your client capacity. Kalai handles content creation. You focus on strategy.'
+Channel | Tactic | Goal | Cost
+Personal Network | Direct WhatsApp/email to 50 architect contacts. 'Free for 90 days. Help us improve it.' | 10 active beta users | ₹0
+LinkedIn | Weekly posts from D2V account: 'We built our own marketing AI. Here's what week 1 looked like.' With real metrics. | 500 profile views/post | ₹0 (organic)
+Instagram | Before/after of D2V's marketing: old vs. Kalai-powered. Real screenshots. | 200 saves/post | ₹0 (organic)
+Architecture Communities | Post in CoA, NID alumni, design school groups. Be genuinely helpful. | 50 waitlist signups | ₹0
+Product Hunt | Launch on Product Hunt with architecture-specific positioning | 500 upvotes target | ₹0
+Channel | Targeting | Budget | Expected CAC
+Meta Ads — Instagram | Architects, interior designers, 25–45, India, Business accounts | ₹15,000/month | ₹500–1,500
+Google Ads — Search | 'social media for architects india', 'marketing tool for interior designers' | ₹10,000/month | ₹800–2,000
+YouTube Pre-roll | Channels: architecture, interior design, entrepreneur India | ₹8,000/month | ₹600–1,800
+LinkedIn Ads (V3) | Architects, designers, restaurant owners, 500+ connections | ₹12,000/month | ₹1,000–2,500
+Referral Type | Reward | Implementation
+Refer a friend (any plan) | 1 month free for referrer + 1 month free for referee | Unique referral link in dashboard. Razorpay handles credit.
+Agency refer a client | 20% revenue share for agency on client subscription | Agency tier only. Tracked via workspace referral_code field.
+Social share reward | Extra 5 posts/month for sharing Kalai on LinkedIn/Instagram | OAuth-verified share detection via platform APIs.
+Trigger Event | In-Product Message | CTA
+Free user reaches 5-post limit | 'You've used all 5 free posts this month. Upgrade to unlock unlimited posts and see your leads.' | Upgrade — ₹9,999/year
+Free user receives first DM | 'Someone messaged you! Upgrade to Growth to see their profile and reply with AI.' | Unlock Leads
+Free user posts get engagement | 'Your post got 347 views. Upgrade to see who engaged and score your hottest leads.' | See My Leads
+Free user's Google Business profile not connected | 'Connect your Google Business Profile and reach customers who search for you on Maps. Free feature.' | Connect Google
+30 days on free plan | 'You've been building for 30 days. Here's what Kalai Growth users are getting that you're missing...' [feature comparison] | Upgrade Now
+Test | Variant A | Variant B | Measure
+Primary plan display | ₹9,999/year shown first | ₹999/month shown first | Which converts better?
+Free tier limit | 5 posts/month | 10 posts/month | Impact on conversion vs. engagement?
+Trial mechanism | Free forever (5 posts) | ₹49 unlock experiment (full Growth for 30 days) | Conversion quality?
+Onboarding CTA | 'Start for free' | 'Build your brand in 10 minutes' | Signup rate?
+Metric | Week 2 | Month 1 | Month 3 | Month 6
+Waitlist / Signups | 100 | 500 | 2,000 | 10,000
+Active Beta Users | 10 | 50 | 200 | 1,000
+Paying Users | 5 | 25 | 150 | 800
+MRR | ₹25K | ₹2.5L | ₹15L | ₹80L
+Free-to-Paid Conv. | 5% | 6% | 8% | 12%
+Monthly Churn | — | <10% | <6% | <4%
+Avg. Posts Published/User/Month | — | 12 | 18 | 22
+NPS | — | 40 | 52 | 65
+Review Cadence: Weekly: key metrics review (signups, conversions, churn). Monthly: full P&L, CAC analysis, user interviews (min 3/month). Quarterly: strategy review, roadmap reprioritisation.
