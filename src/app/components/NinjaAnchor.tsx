@@ -1,13 +1,132 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useGLTF, Float, Preload } from "@react-three/drei";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useLenis } from "lenis/react";
-import Image from "next/image";
+import * as THREE from "three";
+
+// The true GLTF Ninja Model that user will supply later at /models/ninja.glb
+function NinjaModel({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
+  const group = useRef<THREE.Group>(null);
+  
+  // Try loading. If not found, useGLTF throws to the error boundary.
+  const { scene } = useGLTF("/models/ninja.glb");
+
+  useFrame((state) => {
+    if (!group.current) return;
+    const p = scrollProgress.current;
+    
+    // Cinematic 3D path down the screen
+    const isMobile = window.innerWidth < 768;
+    const startY = 3.5;
+    const endY = -1.5;
+    
+    const startX = isMobile ? 1.5 : 2.5;
+    const endX = 0;
+    
+    // Translation
+    const currentY = startY + p * (endY - startY);
+    // Smooth swooping curve for X
+    const curveX = Math.sin(p * Math.PI) * 2;
+    const currentX = startX - p * startX - curveX;
+    
+    // Z Depth
+    const currentZ = -4 + p * 3;
+    
+    group.current.position.set(currentX, currentY, currentZ);
+    
+    // Complex continuous rotation
+    const rY = Math.sin(p * Math.PI * 4) * 0.5 + state.clock.elapsedTime * 0.2;
+    const rZ = Math.sin(p * Math.PI * 2) * 0.1;
+    const rX = Math.cos(p * Math.PI * 2) * 0.15;
+    
+    group.current.rotation.set(rX, rY, rZ);
+
+    // Scaling
+    const scale = 0.8 + p * 0.4;
+    group.current.scale.setScalar(scale);
+  });
+
+  return <primitive object={scene} ref={group} />;
+}
+
+// Ultra-premium glowing lightsaber fallback
+function GlowingLightsaber({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
+  const group = useRef<THREE.Group>(null);
+  const bladeMaterial = useRef<THREE.MeshStandardMaterial>(null);
+
+  useFrame((state) => {
+    if (!group.current) return;
+    const p = scrollProgress.current;
+    
+    const isMobile = window.innerWidth < 768;
+    
+    const startY = 3.5;
+    const endY = -1.5;
+    const currentY = startY + p * (endY - startY);
+    
+    const startX = isMobile ? 1.5 : 2.5;
+    const curveX = Math.sin(p * Math.PI) * 2;
+    const currentX = startX - p * startX - curveX;
+    
+    const currentZ = -4 + p * 3;
+    
+    group.current.position.set(currentX, currentY, currentZ);
+    
+    // Aggressive rotation for the saber fallback (deflecting/floating)
+    const rY = p * Math.PI * 4 + state.clock.elapsedTime * 1.5;
+    const rX = Math.cos(p * Math.PI * 2) * 2;
+    const rZ = Math.sin(p * Math.PI * 2) * 0.5;
+    
+    group.current.rotation.set(rX, rY, rZ);
+
+    // Pulse the plasma blade intensity
+    if (bladeMaterial.current) {
+      bladeMaterial.current.emissiveIntensity = 4 + Math.sin(state.clock.elapsedTime * 4) * 2;
+    }
+  });
+
+  return (
+    <group ref={group}>
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.04, 0.04, 2.5, 32]} />
+        <meshStandardMaterial 
+          ref={bladeMaterial} 
+          color="#ffffff" 
+          emissive="#ffffff" 
+          emissiveIntensity={4} 
+          toneMapped={false} />
+      </mesh>
+      {/* Lightsaber Hilt */}
+      <mesh position={[0, -1.35, 0]}>
+        <cylinderGeometry args={[0.07, 0.07, 0.4, 16]} />
+        <meshStandardMaterial color="#222" metalness={0.9} roughness={0.1} />
+      </mesh>
+    </group>
+  );
+}
+
+class ModelErrorBoundary extends React.Component<{ children: React.ReactNode, fallback: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return <>{this.props.fallback}</>;
+    }
+    return <>{this.props.children}</>;
+  }
+}
 
 export default function NinjaAnchor() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useRef<number>(0);
-  const rafId = useRef<number>(0);
+  const [mounted, setMounted] = useState(false);
 
   useLenis((lenis) => {
     if (lenis) {
@@ -16,75 +135,39 @@ export default function NinjaAnchor() {
   });
 
   useEffect(() => {
-    let lastTime = performance.now();
-    const tick = (now: number) => {
-      lastTime = now;
-      const t = performance.now() * 0.001;
-      
-      const el = containerRef.current;
-      if (el) {
-        const p = scrollProgress.current; // 0 to 1
-        
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        
-        const isMobile = vw < 768;
-        
-        // Start high up and right
-        const startY = -vh * 0.1;
-        const startX = isMobile ? vw * 0.15 : vw * 0.25;
-        
-        // End low and center
-        const endY = vh * 0.45;
-        
-        // Interpolate position
-        const currentY = startY + p * (endY - startY);
-        // Add a sweeping agile curve for X translation
-        const curveX = Math.sin(p * Math.PI) * (vw * 0.25); 
-        const currentX = startX - (p * startX) - curveX;
-        
-        // 3D Parallax Rotation
-        const rY = Math.sin(p * Math.PI * 4) * 35 + Math.sin(t) * 12;
-        const rZ = Math.sin(p * Math.PI * 2) * 5;
-        const rX = Math.cos(p * Math.PI * 2) * 15;
-        
-        // Scale grows as we dive deeper into the experience
-        const scale = 0.6 + p * 0.6 + Math.sin(t * 2) * 0.03;
-        
-        // Float effect (gravity defiance)
-        const floatY = Math.sin(t * 2.5) * 15;
-
-        // Apply 3D coordinate Matrix
-        el.style.transform = `translate3d(${currentX}px, ${currentY + floatY}px, 0) scale(${scale}) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg)`;
-      }
-
-      rafId.current = requestAnimationFrame(tick);
-    };
-
-    rafId.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId.current);
+    setMounted(true);
   }, []);
 
+  if (!mounted) return null;
+
   return (
-    <div 
-      className="fixed top-0 left-1/2 -z-10 pointer-events-none mix-blend-screen"
-      style={{ 
-        width: "600px", height: "800px",
-        marginLeft: "-300px", 
-        perspective: "1200px" 
-      }}
-    >
-      <div ref={containerRef} className="relative w-full h-full will-change-transform" style={{ transformStyle: "preserve-3d" }}>
-        <Image 
-          src="/images/bg/ninja_model.png" 
-          alt="3D Ninja Samurai Automation Agent"
-          fill
-          className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-          quality={100}
-          unoptimized
-          priority
-        />
-      </div>
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 10 }}>
+      <Canvas
+        camera={{ position: [0, 0, 5], fov: 45 }}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        dpr={typeof window !== 'undefined' ? window.devicePixelRatio : 1}
+      >
+        <ambientLight intensity={0.4} />
+        <directionalLight position={[5, 10, 5]} intensity={2.5} castShadow />
+        
+        {/* Cinematic Rim Lighting (Deep Blue + Orange) */}
+        <spotLight position={[-8, 5, -5]} angle={0.4} penumbra={1} intensity={5} color="#3b82f6" />
+        <spotLight position={[8, -5, 5]} angle={0.4} penumbra={1} intensity={3} color="#f97316" />
+
+        <ModelErrorBoundary fallback={<GlowingLightsaber scrollProgress={scrollProgress} />}>
+          <Suspense fallback={<GlowingLightsaber scrollProgress={scrollProgress} />}>
+            <Float speed={2} rotationIntensity={0.5} floatIntensity={1.5}>
+              <NinjaModel scrollProgress={scrollProgress} />
+            </Float>
+            <Preload all />
+          </Suspense>
+        </ModelErrorBoundary>
+
+        {/* Post-processing Bloom for true Lightsaber glowing effects */}
+        <EffectComposer>
+          <Bloom luminanceThreshold={1.2} mipmapBlur intensity={1.5} />
+        </EffectComposer>
+      </Canvas>
     </div>
   );
 }
