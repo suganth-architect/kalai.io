@@ -1,54 +1,26 @@
 export default function Footer() {
   return (
-    <footer
-      style={{
-        backgroundColor: "var(--color-void)",
-        borderTop: "1px solid var(--color-border)",
-        padding: "var(--space-5) 0",
-      }}
-    >
+    <footer className="footer">
       <div className="corridor">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "var(--space-3)",
-          }}
-        >
+        <div className="flex-col-center gap-3">
           {/* Mark */}
-          <span
-            style={{
-              fontFamily: "var(--font-tamil), sans-serif",
-              fontSize: "1.25rem",
-              fontWeight: 500,
-              color: "var(--color-text-tertiary)",
-            }}
-          >
+          <span className="type-tamil-mark">
             கலை
           </span>
 
           {/* Legal links */}
-          <nav
-            className="type-micro voice-sub"
-            style={{
-              display: "flex",
-              gap: "var(--space-4)",
-              flexWrap: "wrap",
-              justifyContent: "center",
-            }}
-          >
-            <a href="/terms" style={{ color: "inherit", textDecoration: "none" }}>
+          <nav className="type-micro voice-sub flex-wrap-center gap-4">
+            <a href="/terms" className="footer-link">
               Terms
             </a>
-            <a href="/privacy" style={{ color: "inherit", textDecoration: "none" }}>
+            <a href="/privacy" className="footer-link">
               Privacy
             </a>
             <a
               href="https://instagram.com/kalai.io"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "inherit", textDecoration: "none" }}
+              className="footer-link"
             >
               Instagram
             </a>
@@ -56,7 +28,7 @@ export default function Footer() {
               href="https://linkedin.com/company/kalai-io"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "inherit", textDecoration: "none" }}
+              className="footer-link"
             >
               LinkedIn
             </a>

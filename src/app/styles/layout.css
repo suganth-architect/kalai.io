@@ -1,0 +1,486 @@
+/* ============================================================
+   KALAI.IO — Layout System
+   /Visual Design System §4
+   
+   The corridor, spacing helpers, alignment utilities,
+   stage sections, component shells, and structural elements.
+   ============================================================ */
+
+/* ── Corridor System (§4.3) ── */
+
+.corridor {
+  width: 92vw;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.corridor-wide {
+  width: 92vw;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.corridor-narrow {
+  width: 88vw;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Stage Sections ── */
+
+.stage-arrival {
+  background-color: var(--color-stage-arrival);
+}
+
+.stage-disruption {
+  background-color: var(--color-stage-disruption);
+}
+
+.stage-revelation {
+  background-color: var(--color-stage-revelation);
+}
+
+.stage-proof {
+  background-color: var(--color-stage-proof);
+}
+
+.stage-desire {
+  background-color: var(--color-stage-desire);
+}
+
+.stage-conversion {
+  background-color: var(--color-stage-conversion);
+}
+
+/* ── Stage Spacing ── */
+
+.stage-pad {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-7);
+}
+
+.stage-pad-arrival {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
+
+.stage-pad-conversion {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-8);
+}
+
+/* ── Margin-Top Helpers ── */
+
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-5 { margin-top: var(--space-5); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-7 { margin-top: var(--space-7); }
+.mt-8 { margin-top: var(--space-8); }
+
+/* ── Margin-Bottom Helpers ── */
+
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-5 { margin-bottom: var(--space-5); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-7 { margin-bottom: var(--space-7); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+/* ── Padding Helpers ── */
+
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+
+.px-2 { padding-left: var(--space-2); padding-right: var(--space-2); }
+.px-3 { padding-left: var(--space-3); padding-right: var(--space-3); }
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+
+.py-3 { padding-top: var(--space-3); padding-right: var(--space-3); }
+.py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+
+/* ── Gap Helpers ── */
+
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+
+/* ── Alignment ── */
+
+.align-center {
+  text-align: center;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.center-inline {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Flexbox Utilities ── */
+
+.flex-col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flex-row-center {
+  display: flex;
+  align-items: center;
+}
+
+.flex-wrap-center {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Grid Utilities ── */
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ── Positioning ── */
+
+.relative {
+  position: relative;
+}
+
+/* ============================================================
+   COMPONENTS: Exhibit Card (/Visual Design System §5.2)
+   ============================================================ */
+
+.exhibit-card {
+  background-color: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.exhibit-card-padded {
+  background-color: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+}
+
+@media (min-width: 768px) {
+  .exhibit-card-padded {
+    padding: 32px;
+  }
+}
+
+/* Exhibit card surface variants (Before/After) */
+.exhibit-card-cold {
+  background-color: var(--color-before-cold);
+}
+
+.exhibit-card-warm {
+  background-color: var(--color-after-warm);
+}
+
+/* ============================================================
+   COMPONENTS: CTA Input (/Visual Design System §5.3)
+   ============================================================ */
+
+.cta-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border-emphasis);
+  padding: var(--space-3) 0;
+  font-size: clamp(1.25rem, 1.5vw + 0.5rem, 1.75rem);
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color var(--ease-default);
+}
+
+.cta-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.cta-input:focus {
+  border-bottom-color: var(--color-accent);
+  box-shadow: var(--shadow-input-focus);
+}
+
+/* ============================================================
+   COMPONENTS: CTA Button (/Visual Design System §5.1)
+   ============================================================ */
+
+.cta-button {
+  width: 100%;
+  height: var(--cta-height-mobile);
+  background-color: var(--color-accent);
+  color: var(--color-void);
+  border: none;
+  border-radius: var(--radius-card);
+  font-size: clamp(1rem, 0.5vw + 0.75rem, 1.125rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: var(--shadow-accent-glow);
+  transition: transform var(--ease-press), box-shadow var(--ease-press);
+}
+
+.cta-button:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-accent-glow-sm);
+}
+
+@media (min-width: 768px) {
+  .cta-button {
+    height: var(--cta-height-desktop);
+  }
+}
+
+/* ============================================================
+   COMPONENTS: Proof-specific structures
+   ============================================================ */
+
+/* Brand specimen container (dark matte) */
+.specimen-display {
+  background-color: var(--color-specimen-dark);
+  padding: 48px var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Logo placeholder shape */
+.specimen-logo {
+  width: var(--logo-placeholder-size);
+  height: var(--logo-placeholder-size);
+  border-radius: var(--radius-logo);
+  background-color: var(--color-accent-muted);
+  opacity: var(--voice-whisper);
+}
+
+/* Color swatch circle */
+.swatch {
+  width: var(--swatch-size);
+  height: var(--swatch-size);
+  border-radius: 50%;
+}
+
+.swatch-primary { background-color: var(--color-specimen-primary); }
+.swatch-secondary { background-color: var(--color-specimen-secondary); }
+.swatch-accent { background-color: var(--color-specimen-accent); }
+
+/* IG chrome bar */
+.ig-chrome {
+  height: var(--ig-chrome-height);
+  background-color: var(--color-ig-chrome);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  gap: var(--space-1);
+}
+
+/* IG chrome dot indicator */
+.ig-dot {
+  width: var(--ig-dot-size);
+  height: var(--ig-dot-size);
+  border-radius: 50%;
+  background-color: var(--color-text-tertiary);
+  opacity: 0.3;
+}
+
+/* IG feed grid */
+.ig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+/* IG grid cell */
+.ig-cell {
+  aspect-ratio: 1;
+}
+
+/* Feed caption container */
+.feed-caption {
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ============================================================
+   COMPONENTS: Timeline (/Visual Design System — DESIRE)
+   ============================================================ */
+
+.timeline {
+  border-left: 1px solid var(--color-accent-muted);
+  padding-left: var(--space-4);
+  opacity: 0.9;
+}
+
+.timeline-entry-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.timeline-node {
+  width: var(--timeline-node-size);
+  height: var(--timeline-node-size);
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  margin-left: -27px;
+}
+
+/* ============================================================
+   COMPONENTS: Network Visualization Placeholder
+   ============================================================ */
+
+.network-placeholder-area {
+  margin-top: var(--space-6);
+  height: var(--network-placeholder-area);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.network-placeholder-circle {
+  width: var(--network-placeholder-size);
+  height: var(--network-placeholder-size);
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  opacity: 0.2;
+}
+
+/* ============================================================
+   COMPONENTS: Wordmark (ARRIVAL)
+   ============================================================ */
+
+.wordmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+/* ============================================================
+   COMPONENTS: Footer
+   ============================================================ */
+
+.footer {
+  background-color: var(--color-void);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-5) 0;
+}
+
+.footer-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ============================================================
+   STRUCTURAL HELPERS
+   ============================================================ */
+
+/* Subtext constraint (ARRIVAL) */
+.subtext-narrow {
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Artifact gap (48px between PROOF artifacts — museum spacing) */
+.artifact-gap {
+  margin-bottom: 48px;
+}
+
+/* ============================================================
+   FOCUS & ACCESSIBILITY
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background-color: hsla(38, 92%, 50%, 0.25);
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+   COMPONENTS: The Thread — Signature Visual Element
+   Fixed SVG filament traversing the entire scroll.
+   ============================================================ */
+
+.thread-svg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.thread-line {
+  will-change: d, opacity, stroke-width;
+  transition: none;
+}
+
+.thread-glow {
+  filter: blur(3px);
+  will-change: d, opacity, stroke-width;
+  transition: none;
+}
+
+/* Reduced motion: static thread, no glow */
+@media (prefers-reduced-motion: reduce) {
+  .thread-glow {
+    display: none;
+  }
+}
+
+/* ============================================================
+   SCROLL TRIGGER: in-view state
+   Applied by ScrollTrigger (or IntersectionObserver fallback)
+   when a section enters the viewport.
+   
+   Future animation layers will hook into these classes.
+   Currently no visual effect — infrastructure only.
+   ============================================================ */
+
+.in-view {
+  /* Marker class — selector target for future animations.
+     No visual effect to avoid layout shifts. */
+  --in-view: 1;
+}
+
+/* Reduced motion: skip all scroll-driven animations */
+@media (prefers-reduced-motion: reduce) {
+  .in-view {
+    --in-view: 0;
+  }
+}
+

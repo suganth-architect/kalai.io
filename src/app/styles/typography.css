@@ -1,0 +1,194 @@
+/* ============================================================
+   KALAI.IO — Typography System
+   /Visual Design System §1
+   
+   Scale: Display → Heading → Statement → Body → Caption → Micro
+   Voice: full → normal → aside → whisper → sub
+   ============================================================ */
+
+/* ── Type Scale ── */
+
+.type-display {
+  font-size: clamp(2.5rem, 5vw + 1rem, 5.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+}
+
+.type-heading {
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 3rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+.type-statement {
+  font-size: clamp(1.25rem, 1.5vw + 0.5rem, 1.75rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.type-body {
+  font-size: clamp(1rem, 0.5vw + 0.75rem, 1.125rem);
+  font-weight: 300;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--color-text-primary);
+}
+
+.type-caption {
+  font-size: clamp(0.875rem, 0.25vw + 0.75rem, 0.9375rem);
+  font-weight: 300;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  color: var(--color-text-secondary);
+}
+
+.type-micro {
+  font-size: clamp(0.6875rem, 0.2vw + 0.6rem, 0.75rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: var(--color-text-tertiary);
+}
+
+/* ── Tamil Type (கலை) ── */
+
+.type-tamil {
+  font-family: var(--font-tamil), sans-serif;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+/* REVELATION: 8% larger for optical parity with Latin */
+.type-tamil-display {
+  font-family: var(--font-tamil), sans-serif;
+  font-size: clamp(1.4rem, 2.5vw + 0.4rem, 2.4rem);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+/* Footer: smaller mark */
+.type-tamil-mark {
+  font-family: var(--font-tamil), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+/* ── Voice Control (opacity levels) ── */
+
+.voice-full {
+  opacity: var(--voice-full);
+}
+
+.voice-normal {
+  opacity: var(--voice-normal);
+}
+
+.voice-aside {
+  opacity: var(--voice-aside);
+}
+
+.voice-whisper {
+  opacity: var(--voice-whisper);
+}
+
+.voice-sub {
+  opacity: var(--voice-sub);
+}
+
+/* ── Weight Modifiers ── */
+
+.weight-300 {
+  font-weight: 300;
+}
+
+.weight-400 {
+  font-weight: 400;
+}
+
+.weight-500 {
+  font-weight: 500;
+}
+
+/* The single heaviest weight — reserved for "Kalai" in REVELATION */
+.weight-600 {
+  font-weight: 600;
+}
+
+/* The Weight Shift — controlled unpredictability (§7.3) */
+.weight-shift {
+  font-weight: 500;
+}
+
+/* ── Text Color Overrides ── */
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
+
+.text-brightest {
+  color: var(--color-text-brightest);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-accent-muted {
+  color: var(--color-accent-muted);
+}
+
+.text-inherit {
+  color: inherit;
+}
+
+/* ── Text Decoration ── */
+
+.no-underline {
+  text-decoration: none;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+/* ── Letter Spacing Overrides ── */
+
+.tracking-wide {
+  letter-spacing: 0.08em;
+}
+
+.tracking-wider {
+  letter-spacing: 0.1em;
+}
+
+.tracking-widest {
+  letter-spacing: 0.12em;
+}
+
+/* ── Accent Elements ── */
+
+.accent-underline {
+  border-bottom: 2px solid var(--color-accent);
+  padding-bottom: 2px;
+  display: inline;
+}
+
+.metric-value {
+  color: var(--color-accent);
+  font-weight: 500;
+}

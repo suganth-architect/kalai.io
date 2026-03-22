@@ -1,0 +1,91 @@
+/* ============================================================
+   KALAI.IO — Design Tokens
+   All CSS custom properties defined mobile-first.
+   Single source of truth for every visual value.
+   ============================================================ */
+
+:root {
+  /* ── Color System (/Visual Design System §2.1) ── */
+  
+  /* Backgrounds — darkest to lightest */
+  --color-void: hsl(220, 12%, 6%);
+  --color-surface: hsl(220, 8%, 12%);
+  --color-surface-warm: hsl(30, 10%, 15%);
+  --color-surface-elevated: hsl(220, 6%, 18%);
+  --color-conversion-dark: hsl(225, 15%, 9%);
+
+  /* Stage backgrounds — temperature map */
+  --color-stage-arrival: var(--color-void);
+  --color-stage-disruption: hsl(25, 6%, 10%);
+  --color-stage-revelation: hsl(30, 10%, 15%);
+  --color-stage-proof: hsl(220, 6%, 14%);
+  --color-stage-desire: hsl(28, 14%, 12%);
+  --color-stage-conversion: var(--color-conversion-dark);
+
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-emphasis: rgba(255, 255, 255, 0.15);
+
+  /* Text — never pure white, never pure black */
+  --color-text-primary: hsl(0, 0%, 87%);
+  --color-text-secondary: hsl(0, 0%, 60%);
+  --color-text-tertiary: hsl(0, 0%, 40%);
+  --color-text-brightest: hsl(0, 0%, 92%);
+
+  /* Accent — The Thread, interactions, emphasis */
+  --color-accent: hsl(38, 92%, 50%);
+  --color-accent-muted: hsl(38, 60%, 40%);
+  --color-accent-glow: hsla(38, 92%, 50%, 0.15);
+
+  /* Specimen colors (PROOF brand kit) */
+  --color-specimen-primary: #2C3E50;
+  --color-specimen-secondary: #E67E22;
+  --color-specimen-accent: #ECF0F1;
+  --color-specimen-dark: hsl(220, 10%, 8%);
+  --color-before-cold: hsl(220, 4%, 12%);
+  --color-after-warm: hsl(35, 8%, 14%);
+  --color-ig-chrome: hsl(220, 8%, 11%);
+
+  /* ── Spacing Scale (8px system, /Visual Design System §4.2) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --space-7: 96px;
+  --space-8: 128px;
+
+  /* ── Opacity — Voice Control (/Visual Design System §1.6 Rule 4) ── */
+  --voice-full: 1;
+  --voice-normal: 0.87;
+  --voice-aside: 0.7;
+  --voice-whisper: 0.6;
+  --voice-sub: 0.45;
+
+  /* ── Radii ── */
+  --radius-card: 8px;
+  --radius-logo: 12px;
+
+  /* ── Shadows — directional, single-source ── */
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-accent-glow: 0 4px 16px var(--color-accent-glow);
+  --shadow-accent-glow-sm: 0 2px 8px var(--color-accent-glow);
+  --shadow-input-focus: 0 2px 12px var(--color-accent-glow);
+
+  /* ── Transitions ── */
+  --ease-default: 200ms ease;
+  --ease-press: 100ms ease-out;
+
+  /* ── Fixed Dimensions ── */
+  --cta-height-mobile: 52px;
+  --cta-height-desktop: 56px;
+  --swatch-size: 40px;
+  --logo-placeholder-size: 64px;
+  --timeline-node-size: 6px;
+  --ig-dot-size: 4px;
+  --ig-chrome-height: 12px;
+  --network-placeholder-size: 160px;
+  --network-placeholder-area: 200px;
+}

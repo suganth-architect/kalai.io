@@ -5,10 +5,18 @@ import Proof from "./components/Proof";
 import Desire from "./components/Desire";
 import Conversion from "./components/Conversion";
 import Footer from "./components/Footer";
+import StageObserver from "./components/StageObserver";
+import Thread from "./components/Thread";
 
 export default function Home() {
   return (
     <main>
+      {/* GSAP ScrollTrigger ↔ Lenis sync + stage triggers */}
+      <StageObserver />
+
+      {/* The Thread — signature visual element */}
+      <Thread />
+
       {/* Stage 1: Authority without explanation */}
       <Arrival />
 
