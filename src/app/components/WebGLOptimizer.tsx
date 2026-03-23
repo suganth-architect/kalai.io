@@ -5,7 +5,7 @@ import { PerformanceMonitor } from "@react-three/drei";
 import { useStageStore } from "../store/stageStore";
 
 export default function WebGLOptimizer({ children }: { children?: React.ReactNode }) {
-  const { setFpsTier } = useStageStore();
+  const setFpsTier = useStageStore((s) => s.setFpsTier);
 
   return (
     <PerformanceMonitor 

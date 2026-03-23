@@ -7,12 +7,21 @@ import { useLenis } from "lenis/react";
 import * as THREE from "three";
 import { useStageStore } from "../store/stageStore";
 
+// Hoisted constants — prevent per-frame GC pressure from new THREE.Color() allocations
+const ABSORB_COLOR = new THREE.Color("#ffffff");
+
 export default function TheAgent() {
   const meshRef = useRef<THREE.Mesh>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const materialRef = useRef<any>(null);
   const scrollData = useRef({ progress: 0, velocity: 0 });
-  const { currentStage, isTransitioning, isManualOverride, fpsTier, isAbsorbing } = useStageStore();
+
+  // === Zustand selectors — isolated subscriptions prevent cross-field re-renders ===
+  const currentStage = useStageStore((s) => s.currentStage);
+  const isTransitioning = useStageStore((s) => s.isTransitioning);
+  const isManualOverride = useStageStore((s) => s.isManualOverride);
+  const fpsTier = useStageStore((s) => s.fpsTier);
+  const isAbsorbing = useStageStore((s) => s.isAbsorbing);
 
   useLenis((lenis) => {
     if (lenis) {
@@ -20,6 +29,22 @@ export default function TheAgent() {
       scrollData.current.velocity = lenis.velocity ?? 0;
     }
   });
+
+  // === GPU DISPOSAL: Prevent geometry + material memory leaks on unmount ===
+  useEffect(() => {
+    return () => {
+      if (meshRef.current) {
+        meshRef.current.geometry?.dispose();
+        if (meshRef.current.material) {
+          if (Array.isArray(meshRef.current.material)) {
+            meshRef.current.material.forEach((m) => m.dispose());
+          } else {
+            (meshRef.current.material as THREE.Material).dispose();
+          }
+        }
+      }
+    };
+  }, []);
 
   // Choreography Targets
   const targetProps = useRef({
@@ -39,12 +64,12 @@ export default function TheAgent() {
       targetProps.current = {
         x: 0, y: 0, z: -2,
         scale: isMobile ? 1.5 : 2.5,
-        distort: 1.5, speed: 5.0, // Max disruption and churn
-        emissive: new THREE.Color("#ff2a00"), // Glitch red
+        distort: 1.5, speed: 5.0,
+        emissive: new THREE.Color("#ff2a00"),
         color: new THREE.Color("#ffffff"),
         intensity: 2.5
       };
-      return; // Skip stage mapping
+      return;
     }
 
     // STANDARD CHOREOGRAPHY 
@@ -72,11 +97,11 @@ export default function TheAgent() {
       case 3:
         targetProps.current = {
           x: 0, y: 0, z: -2,
-          scale: isMobile ? 0.9 : 1.4, // Drastically reduced the blob width
+          scale: isMobile ? 0.9 : 1.4,
           distort: 0.0, speed: 0.2,
-          emissive: new THREE.Color("#051024"), // Deep dark cinematic blue
-          color: new THREE.Color("#051024"), // Deep dark cinematic blue
-          intensity: 0.8 // Lowered heavily so it acts as a very subtle dark glow protecting white text
+          emissive: new THREE.Color("#051024"),
+          color: new THREE.Color("#051024"),
+          intensity: 0.8
         };
         break;
       case 4:
@@ -123,7 +148,7 @@ export default function TheAgent() {
     }
   }, [currentStage, isManualOverride]);
 
-  // Explicitly decoupling pointer tracking from R3F Canvas logic unlocking Nuclear Canvas Mobile Fixes
+  // Explicitly decoupling pointer tracking from R3F Canvas logic
   const pointerPos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -161,14 +186,12 @@ export default function TheAgent() {
     
     // Position Damping & Calculations
     if (isManualOverride) {
-      // 100% Sandbox tracking to cursor bounds mapped to viewport sizes
       const pointerX = pointerPos.current.x * 5.0;
       const pointerY = pointerPos.current.y * 5.0;
       meshRef.current.position.x = THREE.MathUtils.damp(meshRef.current.position.x, pointerX, 4, delta);
       meshRef.current.position.y = THREE.MathUtils.damp(meshRef.current.position.y, pointerY, 4, delta);
       meshRef.current.position.z = THREE.MathUtils.damp(meshRef.current.position.z, tg.z, 2.5, delta);
     } else {
-      // Standard interpolation
       meshRef.current.position.x = THREE.MathUtils.damp(meshRef.current.position.x, tg.x, 2.5, delta);
       meshRef.current.position.y = THREE.MathUtils.damp(meshRef.current.position.y, tg.y, 2.5, delta);
       meshRef.current.position.z = THREE.MathUtils.damp(meshRef.current.position.z, tg.z, 2.5, delta);
@@ -177,43 +200,40 @@ export default function TheAgent() {
     // Scale calculation (Absorb collapse > Transition envelope > Stage 6 pulse > Default)
     let targetScale = tg.scale;
     if (isAbsorbing) {
-      targetScale = 0.4; // Extreme dense collapse 
+      targetScale = 0.4;
     } else if (isTransitioning) {
-      targetScale = 50.0; // Envelopes the camera entirely cutting off navigation seamlessly
+      targetScale = 50.0;
     } else if (!isManualOverride && currentStage === 6) {
       const dist = Math.sqrt(pointerPos.current.x ** 2 + pointerPos.current.y ** 2);
       const pulse = Math.sin(state.clock.elapsedTime * 1.5) * 0.15;
       targetScale += pulse + (Math.max(0, 1.5 - dist) * 0.4); 
     }
     
-    // Scale snap speed changes dramatically if acting as a rapid algorithmic transition
-    let scaleDampSpeed = 3.0; // standard inertia
+    let scaleDampSpeed = 3.0;
     if (isTransitioning) scaleDampSpeed = 5.0;
-    if (isAbsorbing) scaleDampSpeed = 10.0; // Violent vacuum collapse
+    if (isAbsorbing) scaleDampSpeed = 10.0;
     
     meshRef.current.scale.setScalar(THREE.MathUtils.damp(meshRef.current.scale.x, targetScale, scaleDampSpeed, delta));
 
-    // Dynamic Morphing & Rotation (add chaotic scroll shear if NOT manual override)
+    // Dynamic Morphing & Rotation
     const targetVelocity = Math.abs(scrollData.current.velocity);
     const velMap = isManualOverride ? 0 : Math.min(targetVelocity * 0.05, 1.2);
 
     let finalDistort = tg.distort + velMap;
     let finalSpeed = tg.speed + velMap * 1.5;
 
-    // Cryptographic sequence tightly balls the geometry logic
     if (isAbsorbing) {
-      finalDistort = 0.0; // perfect mathematical sphere
-      finalSpeed = 15.0; // vibrating with energy
+      finalDistort = 0.0;
+      finalSpeed = 15.0;
     }
 
     materialRef.current.distort = THREE.MathUtils.damp(materialRef.current.distort, finalDistort, 3, delta);
     materialRef.current.speed = THREE.MathUtils.damp(materialRef.current.speed, finalSpeed, 3, delta);
 
-    // Color Lerping seamlessly globally depending heavily upon cinematic state priority
+    // Color Lerping — PERF FIX: hoisted constants, zero per-frame allocations
     if (isAbsorbing) {
-      // Flash-bang white emission masking actual string data intake representing decryption overload
-      materialRef.current.emissive.lerp(new THREE.Color("#ffffff"), 0.4);
-      materialRef.current.color.lerp(new THREE.Color("#ffffff"), 0.4);
+      materialRef.current.emissive.lerp(ABSORB_COLOR, 0.4);
+      materialRef.current.color.lerp(ABSORB_COLOR, 0.4);
       materialRef.current.emissiveIntensity = THREE.MathUtils.damp(materialRef.current.emissiveIntensity, 12.0, 8, delta);
     } else {
       materialRef.current.emissive.lerp(tg.emissive, 0.05);
@@ -232,7 +252,6 @@ export default function TheAgent() {
     <group>
         {/* Core Fluid Entity */}
         <mesh ref={meshRef}>
-            {/* Dynamically slice segment count if parsing drops, ensuring 60fps locking on potato devices */}
             {fpsTier === "high" ? (
               <icosahedronGeometry args={[1, 128]} />
             ) : (

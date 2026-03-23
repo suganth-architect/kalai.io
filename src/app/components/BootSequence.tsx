@@ -41,12 +41,17 @@ export default function BootSequence() {
   const topPanelRef = useRef<HTMLDivElement>(null);
   const bottomPanelRef = useRef<HTMLDivElement>(null);
 
-  const { setIsBooted, triggerSFX } = useStageStore();
+  const setIsBooted = useStageStore((s) => s.setIsBooted);
+  const triggerSFX = useStageStore((s) => s.triggerSFX);
 
   useEffect(() => {
-    // The boot sequence absolute layer z-[9999] handles interaction boundaries effectively natively without Javascript.
-    // Explicit Javascript body lock overrides cause perpetual mobile freezes if components crash.
-    // This strictly ensures the layout resolves naturally, and enforces a reset if previously bound elsewhere.
+    // Terminal Easter Egg — signature fingerprint for developers inspecting the console
+    console.log(
+      "%c KALAI.IO // NEURAL MESH ACTIVE. \n%c AUTONOMY: 100% | RENDER PIPELINE: STABLE.",
+      "background: #000; color: #fff; font-size: 14px; font-weight: 600; padding: 8px 16px; font-family: monospace;",
+      "background: #0a0a0a; color: #3b6fa0; font-size: 11px; font-weight: 400; padding: 6px 16px; font-family: monospace;"
+    );
+
     return () => {
       document.body.style.overflow = "";
     };

@@ -7,15 +7,16 @@ import { useStageStore } from "../store/stageStore";
 export default function AgentCursor() {
   const outerRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
-  const { sfxTrigger, isBooted } = useStageStore();
+  const sfxTrigger = useStageStore((s) => s.sfxTrigger);
+  const isBooted = useStageStore((s) => s.isBooted);
 
   useEffect(() => {
-    // Hide default cursor globally, overriding any lingering default OS hands
+    // Hide default cursor on desktop only — preserve native cursor for tablets/touchscreens
     document.body.style.cursor = "none";
     
-    // Any hovered anchor tags should also not default to pointer since we replaced it
+    // Scoped to fine pointer devices (mouse/trackpad) — tablets and mobile keep native cursors
     const style = document.createElement("style");
-    style.innerHTML = `* { cursor: none !important; }`;
+    style.innerHTML = `@media (pointer: fine) { * { cursor: none !important; } }`;
     document.head.appendChild(style);
 
     const outerX = gsap.quickTo(outerRef.current, "x", { duration: 0.15, ease: "power2.out" });

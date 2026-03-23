@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 
 export default function StageController() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { setCurrentStage } = useStageStore();
+  const setCurrentStage = useStageStore((s) => s.setCurrentStage);
   const [isMounted, setIsMounted] = useState(false);
 
   // Prevent hydration mismatch by blocking render execution until DOM is verified
@@ -22,8 +22,8 @@ export default function StageController() {
     const t = setTimeout(() => setIsMounted(true), 10);
     return () => {
       clearTimeout(t);
-      // Hard reset all triggers gracefully upon complex un-mounts to prevent detached targets
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      // useGSAP's scoped context (line 39) handles cleanup automatically.
+      // No global ScrollTrigger.getAll().kill() — that destroys triggers from other components.
     };
   }, []);
 

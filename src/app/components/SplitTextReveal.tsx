@@ -17,7 +17,7 @@ export default function SplitTextReveal({ text, className = "" }: SplitTextProps
   const containerRef = useRef<HTMLDivElement>(null);
   const charsRef = useRef<(HTMLSpanElement | null)[]>([]);
   const words = text.split(" ");
-  const { triggerSFX } = useStageStore();
+  const triggerSFX = useStageStore((s) => s.triggerSFX);
   
   useGSAP(() => {
     const chars = charsRef.current.filter((el): el is HTMLSpanElement => el !== null);

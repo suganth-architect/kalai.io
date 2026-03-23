@@ -12,7 +12,7 @@ interface MagneticProps {
 export default function MagneticButton({ children, className = "" }: MagneticProps) {
   const magneticRef = useRef<HTMLDivElement>(null);
 
-  const { triggerSFX } = useStageStore();
+  const triggerSFX = useStageStore((s) => s.triggerSFX);
 
   useEffect(() => {
     if (!magneticRef.current) return;
@@ -66,7 +66,19 @@ export default function MagneticButton({ children, className = "" }: MagneticPro
   }, [triggerSFX]);
 
   return (
-    <div ref={magneticRef} className={`inline-block w-full ${className}`}>
+    <div
+      ref={magneticRef}
+      className={`inline-block w-full ${className}`}
+      role="button"
+      tabIndex={0}
+      aria-label="Engage Kalai Autonomous Agent"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          magneticRef.current?.click();
+        }
+      }}
+    >
       {children}
     </div>
   );

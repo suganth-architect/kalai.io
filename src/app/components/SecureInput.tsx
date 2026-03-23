@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useStageStore } from "../store/stageStore";
 
 export default function SecureInput() {
@@ -9,7 +9,15 @@ export default function SecureInput() {
   const [isResolved, setIsResolved] = useState(false);
   const [sequenceCode, setSequenceCode] = useState("");
   
-  const { triggerAbsorption, triggerSFX } = useStageStore();
+  const triggerAbsorption = useStageStore((s) => s.triggerAbsorption);
+  const clearAbsorption = useStageStore((s) => s.clearAbsorption);
+  const triggerSFX = useStageStore((s) => s.triggerSFX);
+  const absorbTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Cleanup absorption timeout on unmount
+  useEffect(() => {
+    return () => clearTimeout(absorbTimeout.current);
+  }, []);
 
   useEffect(() => {
     // Single robust timeout ensuring the matrix char resolves to the exact real string rapidly without ghosting
@@ -42,9 +50,11 @@ export default function SecureInput() {
     e.preventDefault();
     if (!realValue || isResolved) return;
 
-    // Trigger complete data absorption override sequence dynamically executing across R3F and Zustand
+    // Trigger absorption with local lifecycle management
     triggerAbsorption();
     triggerSFX("absorb");
+    clearTimeout(absorbTimeout.current);
+    absorbTimeout.current = setTimeout(() => clearAbsorption(), 400);
     
     // Generate isolated confirmation sequence
     const hex = Math.floor(Math.random() * 65535).toString(16).toUpperCase().padStart(4, '0');
@@ -64,11 +74,10 @@ export default function SecureInput() {
 
   return (
     <form onSubmit={handleSubmit} className="relative w-full max-w-md mx-auto z-50">
-      {/* 
-        True DOM Input mapping - purely transparent to the user, rendering Native cursor and focus states perfectly.
-        We layer it directly over the visual ghost string.
-      */}
+      {/* Accessible label — visually hidden, linked to input for screen readers */}
+      <label htmlFor="kalai-uplink" className="sr-only">Enter email for secure uplink</label>
       <input
+        id="kalai-uplink"
         type="email"
         value={realValue}
         onChange={handleChange}
@@ -91,6 +100,7 @@ export default function SecureInput() {
 
       <button 
         type="submit" 
+        aria-label="Transmit data sequence"
         className="absolute right-0 top-0 bottom-0 px-4 text-xs font-mono uppercase tracking-widest text-white/50 hover:text-white transition-colors z-30"
       >
         Transmit [↵]

@@ -13,7 +13,7 @@ interface TransitionRouterProps {
 
 export default function TransitionRouter({ href, children, className = "", onClick }: TransitionRouterProps) {
   const router = useRouter();
-  const { setIsTransitioning } = useStageStore();
+  const setIsTransitioning = useStageStore((s) => s.setIsTransitioning);
 
   const handleTransition = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault(); // Stop standard direct navigation

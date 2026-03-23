@@ -11,7 +11,7 @@ import WebGLGallery from "./WebGLGallery";
 import WebGLOptimizer from "./WebGLOptimizer";
 
 export default function CinematicEnvironment() {
-  const { fpsTier } = useStageStore();
+  const fpsTier = useStageStore((s) => s.fpsTier);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

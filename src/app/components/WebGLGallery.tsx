@@ -14,11 +14,42 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
   const scrollData = useRef({ velocity: 0 });
   const pointerPos = useRef({ x: 0, y: 0 });
 
+  // === PERF FIX: Cache DOM element ref + bounding rect ===
+  // Eliminates 360 getElementById + getBoundingClientRect calls/sec
+  const domElRef = useRef<HTMLElement | null>(null);
+  const cachedRect = useRef({ left: 0, top: 0, width: 1, height: 1 });
+
+  const syncRect = () => {
+    if (domElRef.current) {
+      const r = domElRef.current.getBoundingClientRect();
+      cachedRect.current.left = r.left;
+      cachedRect.current.top = r.top;
+      cachedRect.current.width = r.width;
+      cachedRect.current.height = r.height;
+    }
+  };
+
+  // Sync rect position on every Lenis scroll callback (once per frame, only when scrolling)
   useLenis((lenis) => {
-    if(lenis) scrollData.current.velocity = lenis.velocity ?? 0;
+    if (lenis) {
+      scrollData.current.velocity = lenis.velocity ?? 0;
+      syncRect(); // top/left change on scroll
+    }
   });
 
   useEffect(() => {
+    // DOM query ONCE on mount — cached for entire component lifetime
+    domElRef.current = document.getElementById(domId);
+    syncRect();
+
+    // ResizeObserver updates cached dimensions on layout changes
+    let ro: ResizeObserver | null = null;
+    if (domElRef.current) {
+      ro = new ResizeObserver(syncRect);
+      ro.observe(domElRef.current);
+    }
+
+    // Pointer tracking
     const handlePointer = (e: MouseEvent | TouchEvent) => {
       let clientX = 0;
       let clientY = 0;
@@ -40,17 +71,21 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
     window.addEventListener("touchmove", handlePointer, { passive: true });
     
     return () => {
+       ro?.disconnect();
        window.removeEventListener("mousemove", handlePointer);
        window.removeEventListener("touchmove", handlePointer);
+       // === GPU DISPOSAL: Prevent texture + material memory leaks ===
+       texture.dispose();
+       materialRef.current?.dispose();
     };
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domId]);
 
   useFrame((state, delta) => {
-     const domElement = document.getElementById(domId);
-     if (!domElement || !meshRef.current || !materialRef.current) return;
+     // Read from cached refs — ZERO DOM queries or forced reflows per frame
+     if (!domElRef.current || !meshRef.current || !materialRef.current) return;
 
-     // Align exact bounding rect measurements directly from DOM to matching WebGL coords
-     const rect = domElement.getBoundingClientRect();
+     const rect = cachedRect.current;
      
      // 1. Calculate mathematically precise screen scale
      const w = (rect.width / size.width) * viewport.width;
@@ -77,7 +112,6 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
      const rectLeftCenter = rect.left + rect.width / 2;
      const rectTopCenter = rect.top + rect.height / 2;
      
-     // Get true pixel distance from mouse to image center, mapped gracefully via bounded refs
      const mousePxX = (pointerPos.current.x + 1) / 2 * size.width;
      const mousePxY = (-pointerPos.current.y + 1) / 2 * size.height;
      
@@ -106,12 +140,8 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
       void main() {
         vUv = uv;
         vec3 pos = position;
-        
-        // 4. VERTEX VELOCITY PHYSICS
-        // Bends the flat plane organically depending on the velocity + UV coordinates
         float curve = sin(uv.y * 3.14159) * uVelocity * 0.008; 
         pos.z += curve;
-        
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
     `,
@@ -123,18 +153,12 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
 
       void main() {
         vec2 uv = vUv;
-
-        // 5. CHROMATIC ABERRATION HOVER EFFECT
-        // Proximity maps from 1.0 (dead center) to 0.0 (far away)
         float intensity = max(0.0, 1.0 - uMouseDistance * 1.5); 
-        
         float shift = sin(uTime * 4.0 + uv.y * 15.0) * 0.012 * intensity;
-        
         float r = texture2D(tDiffuse, vec2(uv.x + shift, uv.y)).r;
         float g = texture2D(tDiffuse, uv).g;
         float b = texture2D(tDiffuse, vec2(uv.x - shift, uv.y)).b;
         float a = texture2D(tDiffuse, uv).a;
-
         gl_FragColor = vec4(r, g, b, a);
       }
     `
@@ -142,7 +166,6 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
 
   return (
     <mesh ref={meshRef}>
-       {/* 32x32 segments afford the necessary geometric detail for clean localized bending */}
        <planeGeometry args={[1, 1, 32, 32]} />
        <shaderMaterial ref={materialRef} args={[shaderArgs]} transparent />
     </mesh>
@@ -151,7 +174,6 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
 
 export default function WebGLGallery() {
   return (
-    // Put behind other canvas elements slightly with Z mapping so the agent still shines
     <group position={[0, 0, -0.5]}>
       <DomToCanvasMesh domId="gallery-poster-1" imageUrl="/images/posters/poster-1.png" />
       <DomToCanvasMesh domId="gallery-poster-2" imageUrl="/images/posters/poster-2.png" />

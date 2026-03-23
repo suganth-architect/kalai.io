@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { useStageStore } from "../store/stageStore";
 
 export default function KalaiObserver() {
-  const { currentStage, isManualOverride } = useStageStore();
+  const currentStage = useStageStore((s) => s.currentStage);
+  const isManualOverride = useStageStore((s) => s.isManualOverride);
   
   const metrics = useRef({
     maxScrollDepth: 0,

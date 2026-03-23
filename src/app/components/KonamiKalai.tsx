@@ -39,7 +39,8 @@ function useSecretCode(secretSequence: string[]) {
 
 export default function KonamiKalai() {
   const { success } = useSecretCode(["k", "a", "l", "a", "i"]);
-  const { setIsManualOverride, triggerSFX } = useStageStore();
+  const setIsManualOverride = useStageStore((s) => s.setIsManualOverride);
+  const triggerSFX = useStageStore((s) => s.triggerSFX);
 
   useEffect(() => {
     if (success) {

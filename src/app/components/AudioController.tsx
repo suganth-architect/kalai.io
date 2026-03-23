@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useLenis } from "lenis/react";
 import { useStageStore } from "../store/stageStore";
 
 export default function AudioController() {
-  const { isBooted, sfxTrigger } = useStageStore();
+  const isBooted = useStageStore((s) => s.isBooted);
+  const sfxTrigger = useStageStore((s) => s.sfxTrigger);
+  const clearSFX = useStageStore((s) => s.clearSFX);
   
   // Audio node references mapped statically for performance
   const ambientAudio = useRef<HTMLAudioElement | null>(null);
@@ -31,31 +33,35 @@ export default function AudioController() {
     bootSfx.current.volume = 0.5;
 
     return () => {
-      // Cleanup to prevent memory leaks when dismounting
-      if(ambientAudio.current) ambientAudio.current.pause();
+      // Cleanup all audio to prevent memory leaks
+      ambientAudio.current?.pause();
+      hoverSfx.current?.pause();
+      cipherSfx.current?.pause();
+      bootSfx.current?.pause();
     };
   }, []);
 
   // 2. Playback state managed explicitly post-initialization bypass
   useEffect(() => {
-    if (!ambientAudio.current) return;
+    if (!ambientAudio.current || !isBooted) return;
     
-    if (isBooted) {
-      ambientAudio.current.play().catch(() => {
-         console.warn("Autoplay blocked heavily by browser policy");
-      });
-      // Fade in the ambient cinematic layer
-      const fadeInterval = setInterval(() => {
-        if (ambientAudio.current && ambientAudio.current.volume < 0.4) {
-          ambientAudio.current.volume = Math.min(ambientAudio.current.volume + 0.05, 0.4);
-        } else {
-          clearInterval(fadeInterval);
-        }
-      }, 200);
-    }
+    ambientAudio.current.play().catch(() => {
+       console.warn("Autoplay blocked by browser policy");
+    });
+    // Fade in the ambient cinematic layer — interval cleaned up on unmount
+    const fadeInterval = setInterval(() => {
+      if (ambientAudio.current && ambientAudio.current.volume < 0.4) {
+        ambientAudio.current.volume = Math.min(ambientAudio.current.volume + 0.05, 0.4);
+      } else {
+        clearInterval(fadeInterval);
+      }
+    }, 200);
+
+    return () => clearInterval(fadeInterval);
   }, [isBooted]);
 
-  // 3. SFX Re-triggering Hooks mapped from Global Zustand Store
+  // 3. SFX Re-triggering — AudioController owns the clear lifecycle
+  const sfxTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   useEffect(() => {
     if (!sfxTrigger) return;
     
@@ -71,9 +77,15 @@ export default function AudioController() {
         bootSfx.current.play().catch(()=>{});
       }
     } catch {
-      // Catch interrupted play promises due to rapid scrolling re-triggers securely
+      // Catch interrupted play promises
     }
-  }, [sfxTrigger]);
+
+    // Clear sfxTrigger after processing — enables re-triggering of same SFX name
+    clearTimeout(sfxTimeout.current);
+    sfxTimeout.current = setTimeout(() => clearSFX(), 100);
+
+    return () => clearTimeout(sfxTimeout.current);
+  }, [sfxTrigger, clearSFX]);
 
   // 4. Kinetic Audio Tracking (Pitch / Volume mapping against Lenis scroll velocity)
   useLenis((lenis) => {

@@ -11,7 +11,9 @@ interface StageState {
   setCurrentStage: (stage: number) => void;
   setIsBooted: (val: boolean) => void;
   triggerSFX: (name: string) => void;
+  clearSFX: () => void;
   triggerAbsorption: () => void;
+  clearAbsorption: () => void;
   setIsTransitioning: (val: boolean) => void;
   setIsManualOverride: (val: boolean) => void;
   setFpsTier: (tier: 'high' | 'low') => void;
@@ -27,15 +29,11 @@ export const useStageStore = create<StageState>((set) => ({
   isAbsorbing: false,
   setCurrentStage: (stage) => set({ currentStage: stage }),
   setIsBooted: (val) => set({ isBooted: val }),
-  triggerSFX: (name) => {
-    set({ sfxTrigger: name });
-    setTimeout(() => set({ sfxTrigger: null }), 100); // Clear immediately for re-triggers
-  },
-  triggerAbsorption: () => {
-    set({ isAbsorbing: true });
-    // Releases WebGL back after a rapid 400ms implosion creating an explosive rebound effect
-    setTimeout(() => set({ isAbsorbing: false }), 400); 
-  },
+  // Pure state setters — consumers handle their own timeout/revert lifecycle
+  triggerSFX: (name) => set({ sfxTrigger: name }),
+  clearSFX: () => set({ sfxTrigger: null }),
+  triggerAbsorption: () => set({ isAbsorbing: true }),
+  clearAbsorption: () => set({ isAbsorbing: false }),
   setIsTransitioning: (val) => set({ isTransitioning: val }),
   setIsManualOverride: (val) => set({ isManualOverride: val }),
   setFpsTier: (tier) => set({ fpsTier: tier }),
