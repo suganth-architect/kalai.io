@@ -67,7 +67,7 @@ export default function StageController() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=150%", // Pins the section for 1.5x relative screen height
+          end: "+=100%", // Halved from 150% forcing much tighter staging and immediate phase handoffs
           pin: true,
           pinSpacing: true,
           scrub: 1, // Inertial fluid scrubbing

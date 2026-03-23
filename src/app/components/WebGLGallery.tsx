@@ -157,6 +157,8 @@ export default function WebGLGallery() {
       <DomToCanvasMesh domId="gallery-poster-2" imageUrl="/images/posters/poster-2.png" />
       <DomToCanvasMesh domId="gallery-poster-3" imageUrl="/images/posters/poster-3.png" />
       <DomToCanvasMesh domId="gallery-poster-4" imageUrl="/images/posters/poster-4.png" />
+      <DomToCanvasMesh domId="gallery-poster-5" imageUrl="/images/posters/poster-5.png" />
+      <DomToCanvasMesh domId="gallery-poster-6" imageUrl="/images/posters/poster-6.png" />
     </group>
   );
 }

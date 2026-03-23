@@ -74,23 +74,29 @@ export default function SplitTextReveal({ text, className = "" }: SplitTextProps
   return (
     <div ref={containerRef} className={`inline-flex flex-wrap ${className}`}>
       {words.map((word, wIdx) => (
-        <span key={wIdx} className="inline-flex mr-[0.25em] whitespace-pre">
-          {word.split("").map((char, cIdx) => {
-            const currentIdx = globalCharIdx++;
-            return (
-              <span 
-                 key={cIdx}
-                 ref={(el) => {
-                   charsRef.current[currentIdx] = el;
-                 }}
-                 className="matrix-char inline-block" 
-                 data-char={char} // Store original character
-              >
-                {char}
-              </span>
-            );
-          })}
-        </span>
+        <React.Fragment key={wIdx}>
+          <span className="inline-flex whitespace-pre">
+            {word.split("").map((char, cIdx) => {
+              const currentIdx = globalCharIdx++;
+              return (
+                <span 
+                   key={cIdx}
+                   ref={(el) => {
+                     charsRef.current[currentIdx] = el;
+                   }}
+                   className="matrix-char inline-block" 
+                   data-char={char} // Store original character
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </span>
+          {/* Inject physical non-breaking spacing dynamically preserving flex layouts while bypassing character obfuscation algorithms */}
+          {wIdx !== words.length - 1 && (
+            <span style={{ display: 'inline-block', width: '0.25em' }}>&nbsp;</span>
+          )}
+        </React.Fragment>
       ))}
     </div>
   );

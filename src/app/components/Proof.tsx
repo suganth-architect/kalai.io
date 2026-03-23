@@ -54,7 +54,7 @@ export default function Proof() {
          These are purely structural placeholders for scroll positioning & intersection tracking 
       */}
       <div className="corridor-wide artifact-gap relative z-0">
-        <div className="poster-gallery grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="poster-gallery grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           <div 
             id="gallery-poster-1" 
             className="poster-item w-full relative" 
@@ -62,17 +62,27 @@ export default function Proof() {
           />
           <div 
             id="gallery-poster-2" 
-            className="poster-item w-full relative pt-4 md:pt-12" 
+            className="poster-item w-full relative pt-4 md:pt-12 lg:pt-24" 
             style={{ aspectRatio: '4/5' }} 
           />
           <div 
             id="gallery-poster-3" 
-            className="poster-item w-full relative pt-2 md:pt-6" 
+            className="poster-item w-full relative pt-2 md:pt-6 lg:pt-12" 
             style={{ aspectRatio: '4/5' }} 
           />
           <div 
             id="gallery-poster-4" 
-            className="poster-item w-full relative pt-6 md:pt-16" 
+            className="poster-item w-full relative pt-6 md:pt-4" 
+            style={{ aspectRatio: '4/5' }} 
+          />
+          <div 
+            id="gallery-poster-5" 
+            className="poster-item w-full relative pt-1 md:pt-16" 
+            style={{ aspectRatio: '4/5' }} 
+          />
+          <div 
+            id="gallery-poster-6" 
+            className="poster-item w-full relative pt-4 md:pt-6" 
             style={{ aspectRatio: '4/5' }} 
           />
         </div>
