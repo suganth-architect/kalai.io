@@ -44,6 +44,7 @@ export default function CinematicEnvironment() {
       <Canvas
         className="absolute inset-0 z-10 w-full h-full"
         style={{ touchAction: "auto", pointerEvents: "none" }} // Crucial to prevent R3F from blocking mobile gestures entirely
+        aria-hidden="true" // Mutes the geometry loop entirely preventing screen readers from absorbing raw vertex shaders as undefined text mapping
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }} // Antialias false when using PostProcessing
         dpr={fpsTier === "high" ? [1, 2] : 1} // Downgrades DPR to strict 1.0 bound on thermal/fps throttle

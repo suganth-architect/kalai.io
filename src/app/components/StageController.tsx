@@ -59,43 +59,63 @@ export default function StageController() {
       const content = section.querySelectorAll(".corridor, .corridor-wide");
       if (!content || content.length === 0) return;
 
-      // Set initial isolated GSAP matrix avoiding flash of unstyled content
-      gsap.set(content, { opacity: 0, y: 100, filter: "blur(12px)" });
+      if (index === 0) {
+        // STAGE 1 (Arrival): Must default structurally visible on load. No opacity locks.
+        gsap.set(content, { opacity: 1, y: 0, filter: "blur(0px)" });
+        
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=100%",
+            pin: true,
+            pinSpacing: true,
+            scrub: 1, 
+            onEnter: () => setCurrentStage(stageNum),
+            onEnterBack: () => setCurrentStage(stageNum),
+          }
+        });
+        
+        // 1. Hold instantly because the component is already visibly mounted natively at 0 scroll
+        tl.to({}, { duration: 4 });
+        
+        // 2. Exit precisely native
+        tl.to(content, { opacity: 0, y: -150, filter: "blur(20px)", duration: 2, ease: "power2.in" });
+        
+      } else {
+        // STAGES 2-7: Re-mapped triggers eliminating dead scroll-gap zones!
+        gsap.set(content, { opacity: 0, y: 150, filter: "blur(12px)" });
 
-      // Create a master timeline explicitly terminating tied scroll triggers safely
-      const tl = gsap.timeline({
-        scrollTrigger: {
+        // Phase A: The Animation interpolations tracking across both the entry boundary + pinned duration seamlessly
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%", // Ignites the opacity exactly as the user hits the bottom section tracking up
+            end: "bottom top+=100%", // Covers exactly to the mathematical end of the PinSpacing threshold natively
+            scrub: 1,
+            onEnter: () => setCurrentStage(stageNum),
+            onEnterBack: () => setCurrentStage(stageNum),
+          }
+        });
+
+        // Track 1: Entering the viewport. Interpolates 0 opacity -> 1 exactly tracking the layout shift up to `y: 0` before the pin fires.
+        tl.to(content, { opacity: 1, y: 0, filter: "blur(0px)", duration: 3, ease: "power3.out" });
+        
+        // Track 2: Sustaining lock exactly spanning the explicit pin
+        tl.to({}, { duration: 6 });
+        
+        // Track 3: The standard GSAP overrun sequence
+        tl.to(content, { opacity: 0, y: -150, filter: "blur(20px)", duration: 3, ease: "power2.in" });
+
+        // Phase B: The literal DOM Physics Anchor isolating purely "top top" bindings mathematically
+        ScrollTrigger.create({
           trigger: section,
           start: "top top",
-          end: "+=100%", // Halved from 150% forcing much tighter staging and immediate phase handoffs
+          end: "+=100%",
           pin: true,
           pinSpacing: true,
-          scrub: 1, // Inertial fluid scrubbing
-          onEnter: () => setCurrentStage(stageNum),
-          onEnterBack: () => setCurrentStage(stageNum),
-        }
-      });
-
-      // 1. Enter: Unblur, fade in, translate upward via dampening
-      tl.to(content, {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        duration: 2,
-        ease: "power3.out",
-      });
-
-      // 2. Hold: Keep it perfectly still and readable for a deterministic length
-      tl.to({}, { duration: 4 });
-
-      // 3. Exit: Violently overtake - push up, fade out, blur heavily
-      tl.to(content, {
-        opacity: 0,
-        y: -150,
-        filter: "blur(20px)",
-        duration: 2,
-        ease: "power2.in",
-      });
+        });
+      }
     });
 
   }, { scope: containerRef, dependencies: [isMounted] }); // Execute safely only post-DOM hydration

@@ -26,8 +26,8 @@ export default function SplitTextReveal({ text, className = "" }: SplitTextProps
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: "top 85%", // Starts a bit before the viewer targets it
-        toggleActions: "play none none reverse",
+        start: "top 60%", // Accurately predicts when the parent StageController breaches opacity: 1
+        toggleActions: "play none none reverse", // Hard-lock play avoiding scrub regressions
         onEnter: () => triggerSFX("cipher")
       }
     });
@@ -72,32 +72,38 @@ export default function SplitTextReveal({ text, className = "" }: SplitTextProps
   let globalCharIdx = 0;
 
   return (
-    <div ref={containerRef} className={`inline-flex flex-wrap ${className}`}>
-      {words.map((word, wIdx) => (
-        <React.Fragment key={wIdx}>
-          <span className="inline-flex whitespace-pre">
-            {word.split("").map((char, cIdx) => {
-              const currentIdx = globalCharIdx++;
-              return (
-                <span 
-                   key={cIdx}
-                   ref={(el) => {
-                     charsRef.current[currentIdx] = el;
-                   }}
-                   className="matrix-char inline-block" 
-                   data-char={char} // Store original character
-                >
-                  {char}
-                </span>
-              );
-            })}
-          </span>
-          {/* Inject physical non-breaking spacing dynamically preserving flex layouts while bypassing character obfuscation algorithms */}
-          {wIdx !== words.length - 1 && (
-            <span style={{ display: 'inline-block', width: '0.25em' }}>&nbsp;</span>
-          )}
-        </React.Fragment>
-      ))}
-    </div>
+    <>
+      {/* 1. Mute the violent GSAP geometry map entirely from DOM reader APIs */}
+      <div ref={containerRef} aria-hidden="true" className={`inline-flex flex-wrap ${className}`}>
+        {words.map((word, wIdx) => (
+          <React.Fragment key={wIdx}>
+            <span className="inline-flex whitespace-pre">
+              {word.split("").map((char, cIdx) => {
+                const currentIdx = globalCharIdx++;
+                return (
+                  <span 
+                     key={cIdx}
+                     ref={(el) => {
+                       charsRef.current[currentIdx] = el;
+                     }}
+                     className="matrix-char inline-block" 
+                     data-char={char} // Store original character
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </span>
+            {/* Inject physical non-breaking spacing dynamically preserving flex layouts while bypassing character obfuscation algorithms */}
+            {wIdx !== words.length - 1 && (
+              <span style={{ display: 'inline-block', width: '0.25em' }}>&nbsp;</span>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+      
+      {/* 2. Expose standard high-fidelity string primitives specifically for Assistive APIs (Hidden Visually) */}
+      <span className="sr-only">{text}</span>
+    </>
   );
 }

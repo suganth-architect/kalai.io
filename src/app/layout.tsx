@@ -22,23 +22,23 @@ const notoSansTamil = Noto_Sans_Tamil({
 
 /* ── SEO Metadata ── */
 export const metadata: Metadata = {
-  title: "kalai.io — Your Marketing Runs Itself",
+  title: "kalai.io — Autonomy for Architects",
   description:
-    "The first autonomous AI marketing agent for Indian SMBs. Describe your business once. Everything after that is handled.",
+    "The first AI that runs your entire architectural marketing presence autonomously.",
   keywords: [
     "AI marketing",
     "autonomous marketing",
-    "Indian SMB",
+    "architectural rendering",
     "social media automation",
     "marketing agent",
     "kalai",
   ],
   openGraph: {
-    title: "kalai.io — Your Marketing Runs Itself",
+    title: "kalai.io — Autonomy for Architects",
     description:
-      "The first autonomous AI marketing agent for Indian SMBs.",
+      "The first AI that runs your entire architectural marketing presence autonomously.",
     type: "website",
-    locale: "en_IN",
+    locale: "en_US",
     siteName: "kalai.io",
   },
   robots: {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0e1014",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -78,11 +78,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Kalai",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web Engine",
+    "description": "The first AI that runs your entire architectural marketing presence autonomously."
+  };
+
   return (
     <html
       lang="en"
       className={`${spaceGrotesk.variable} ${notoSansTamil.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="font-[family-name:var(--font-primary)]">
         <KalaiObserver />
         <AgentCursor />
