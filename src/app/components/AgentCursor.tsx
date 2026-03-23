@@ -65,12 +65,12 @@ export default function AgentCursor() {
       {/* Outer Ring — Hollow 1px bordered glass token */}
       <div 
         ref={outerRef} 
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-white/60 pointer-events-none mix-blend-difference z-[10000] shadow-[0_0_10px_2px_rgba(255,255,255,0.1)]"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-white/60 pointer-events-none mix-blend-difference z-[99999] shadow-[0_0_10px_2px_rgba(255,255,255,0.1)]"
       />
       {/* Solid Core Dot — glowing core perfectly inverting stark white typography */}
       <div 
         ref={coreRef} 
-        className="fixed top-0 left-0 w-[6px] h-[6px] rounded-full bg-white pointer-events-none mix-blend-difference z-[10000]"
+        className="fixed top-0 left-0 w-[6px] h-[6px] rounded-full bg-white pointer-events-none mix-blend-difference z-[99999]"
         style={{ boxShadow: "0 0 12px 3px rgba(255,255,255,0.7)" }}
       />
     </>

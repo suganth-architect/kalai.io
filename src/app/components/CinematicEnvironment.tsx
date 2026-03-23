@@ -43,6 +43,7 @@ export default function CinematicEnvironment() {
       {/* R3F Canvas inextricably linked to scroll via useLenis in TheAgent */}
       <Canvas
         className="absolute inset-0 z-10 w-full h-full"
+        style={{ touchAction: "auto" }} // Crucial to prevent R3F from blocking mobile gestures
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }} // Antialias false when using PostProcessing
         dpr={fpsTier === "high" ? [1, 2] : 1} // Downgrades DPR to strict 1.0 bound on thermal/fps throttle

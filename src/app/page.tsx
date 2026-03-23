@@ -10,7 +10,6 @@ import StageController from "./components/StageController";
 import CinematicEnvironment from "./components/CinematicEnvironment";
 import BootSequence from "./components/BootSequence";
 import AudioController from "./components/AudioController";
-import AgentCursor from "./components/AgentCursor";
 import KonamiKalai from "./components/KonamiKalai";
 
 export default function Home() {
@@ -19,7 +18,6 @@ export default function Home() {
       {/* Immersive Sensory Layers */}
       <BootSequence />
       <AudioController />
-      <AgentCursor />
       <KonamiKalai />
 
       {/* Central GSAP Controller broadcasting Stage & ScrollProgress + animating typography zones */}

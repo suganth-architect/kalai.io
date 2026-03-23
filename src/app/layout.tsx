@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Noto_Sans_Tamil } from "next/font/google";
 import SmoothScroll from "./components/SmoothScroll";
+import AgentCursor from "./components/AgentCursor";
 import "./globals.css";
 
 /* ── Font: Space Grotesk (Primary — variable) ── */
@@ -82,6 +83,7 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${notoSansTamil.variable}`}
     >
       <body className="font-[family-name:var(--font-primary)]">
+        <AgentCursor />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

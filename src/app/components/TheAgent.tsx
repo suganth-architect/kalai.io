@@ -72,11 +72,11 @@ export default function TheAgent() {
       case 3:
         targetProps.current = {
           x: 0, y: 0, z: -2,
-          scale: isMobile ? 1.4 : 2.2,
+          scale: isMobile ? 0.9 : 1.4, // Drastically reduced the blob width
           distort: 0.0, speed: 0.2,
-          emissive: new THREE.Color("#3b82f6"),
-          color: new THREE.Color("#ffffff"),
-          intensity: 3.5
+          emissive: new THREE.Color("#051024"), // Deep dark cinematic blue
+          color: new THREE.Color("#051024"), // Deep dark cinematic blue
+          intensity: 0.8 // Lowered heavily so it acts as a very subtle dark glow protecting white text
         };
         break;
       case 4:

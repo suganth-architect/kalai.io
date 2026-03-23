@@ -80,6 +80,11 @@ export default function BootSequence() {
       ref={overlayRef} 
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center cursor-pointer"
       onClick={handleBoot}
+      onTouchEnd={(e) => {
+        // Prevent ghost clicks triggering twice with synthetic events
+        e.preventDefault();
+        handleBoot();
+      }}
     >
       <div ref={topPanelRef} className="absolute top-0 left-0 w-full h-[50vh] bg-black" />
       <div ref={bottomPanelRef} className="absolute bottom-0 left-0 w-full h-[50vh] bg-black" />
