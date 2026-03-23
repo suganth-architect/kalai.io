@@ -20,7 +20,9 @@ export default function Conversion() {
         </div>
 
         {/* ── Subdued Early Access Note ── */}
-        <p className="type-micro voice-sub mt-4 uppercase tracking-widest">
+        {/* voice-sub (0.20) + type-micro at 40% lightness = ~1.4:1 contrast. */}
+        {/* Upgraded to voice-aside (0.65) + type-caption at 60% lightness ≈ 3.8:1. */}
+        <p className="type-caption voice-aside mt-4 uppercase tracking-widest">
           Early access opening soon
         </p>
       </div>

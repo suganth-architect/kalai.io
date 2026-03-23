@@ -72,7 +72,7 @@ export default function CinematicEnvironment() {
         <EffectComposer>
           {fpsTier === "high" && (<Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={3.5} mipmapBlur radius={0.4} />) as any}
           {(<Noise opacity={0.05} premultiply={true} blendFunction={BlendFunction.OVERLAY} />) as any}
-          {(<Vignette eskil={false} offset={0.1} darkness={1.1} blendFunction={BlendFunction.NORMAL} />) as any}
+          {(<Vignette eskil={false} offset={0.15} darkness={0.55} blendFunction={BlendFunction.NORMAL} />) as any}
         </EffectComposer>
       </Canvas>
 

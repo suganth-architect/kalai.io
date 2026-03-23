@@ -163,7 +163,11 @@
   background-size: 150px 150px;
   background-repeat: repeat;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
+  /* Changed: overlay → screen.
+     overlay() squares dark pixel values, making it destructive on near-black backgrounds.
+     screen() only adds luminance — it is physically incapable of making any pixel darker.
+     GSAP controls runtime opacity; this class sets the blend mode only. */
+  mix-blend-mode: screen;
 }
 
 .overlay-peripheral {

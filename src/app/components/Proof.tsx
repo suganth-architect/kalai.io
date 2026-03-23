@@ -57,42 +57,42 @@ export default function Proof() {
         <div className="poster-gallery grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           <div 
             id="gallery-poster-1" 
-            className="poster-item w-full relative" 
+            className="poster-item w-full relative bg-white/[0.02] border border-white/[0.05] animate-pulse" 
             style={{ aspectRatio: '4/5' }} 
           >
             <span className="sr-only">Kalai AI generated architectural marketing post featuring a moody concrete brutalist exterior with dramatic evening lighting and shadow play.</span>
           </div>
           <div 
             id="gallery-poster-2" 
-            className="poster-item w-full relative pt-4 md:pt-12 lg:pt-24" 
+            className="poster-item w-full relative pt-4 md:pt-12 lg:pt-24 bg-white/[0.02] border border-white/[0.05] animate-pulse" 
             style={{ aspectRatio: '4/5' }} 
           >
             <span className="sr-only">Autonomous social media creative showing a luxury minimalist interior with warm oak flooring, floor-to-ceiling glazing, and curated decor styling.</span>
           </div>
           <div 
             id="gallery-poster-3" 
-            className="poster-item w-full relative pt-2 md:pt-6 lg:pt-12" 
+            className="poster-item w-full relative pt-2 md:pt-6 lg:pt-12 bg-white/[0.02] border border-white/[0.05] animate-pulse" 
             style={{ aspectRatio: '4/5' }} 
           >
             <span className="sr-only">AI-powered 3D architectural visualization of a contemporary night pool villa with ambient underwater lighting and tropical landscaping.</span>
           </div>
           <div 
             id="gallery-poster-4" 
-            className="poster-item w-full relative pt-6 md:pt-4" 
+            className="poster-item w-full relative pt-6 md:pt-4 bg-white/[0.02] border border-white/[0.05] animate-pulse" 
             style={{ aspectRatio: '4/5' }} 
           >
             <span className="sr-only">Premium architectural render showcasing a high-rise residential tower with curtain wall facade and urban skyline context at golden hour.</span>
           </div>
           <div 
             id="gallery-poster-5" 
-            className="poster-item w-full relative pt-1 md:pt-16" 
+            className="poster-item w-full relative pt-1 md:pt-16 bg-white/[0.02] border border-white/[0.05] animate-pulse" 
             style={{ aspectRatio: '4/5' }} 
           >
             <span className="sr-only">Kalai-generated Instagram carousel post for an architectural firm featuring a serene courtyard house with exposed brick and lush vertical gardens.</span>
           </div>
           <div 
             id="gallery-poster-6" 
-            className="poster-item w-full relative pt-4 md:pt-6" 
+            className="poster-item w-full relative pt-4 md:pt-6 bg-white/[0.02] border border-white/[0.05] animate-pulse" 
             style={{ aspectRatio: '4/5' }} 
           >
             <span className="sr-only">Autonomous marketing visual of a boutique commercial interior with bespoke joinery, statement lighting, and premium material palette.</span>
