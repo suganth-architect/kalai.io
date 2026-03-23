@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useLenis } from "lenis/react";
@@ -12,10 +12,38 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
   const { viewport, size } = useThree();
   const texture = useTexture(imageUrl);
   const scrollData = useRef({ velocity: 0 });
+  const pointerPos = useRef({ x: 0, y: 0 });
 
   useLenis((lenis) => {
     if(lenis) scrollData.current.velocity = lenis.velocity ?? 0;
   });
+
+  useEffect(() => {
+    const handlePointer = (e: MouseEvent | TouchEvent) => {
+      let clientX = 0;
+      let clientY = 0;
+
+      if ("touches" in e && e.touches.length > 0) {
+         clientX = e.touches[0].clientX;
+         clientY = e.touches[0].clientY;
+      } else if ("clientX" in e) {
+         clientX = (e as MouseEvent).clientX;
+         clientY = (e as MouseEvent).clientY;
+      } else {
+         return;
+      }
+      pointerPos.current.x = (clientX / window.innerWidth) * 2 - 1;
+      pointerPos.current.y = -(clientY / window.innerHeight) * 2 + 1;
+    };
+
+    window.addEventListener("mousemove", handlePointer, { passive: true });
+    window.addEventListener("touchmove", handlePointer, { passive: true });
+    
+    return () => {
+       window.removeEventListener("mousemove", handlePointer);
+       window.removeEventListener("touchmove", handlePointer);
+    };
+  }, []);
 
   useFrame((state, delta) => {
      const domElement = document.getElementById(domId);
@@ -49,9 +77,9 @@ function DomToCanvasMesh({ domId, imageUrl }: { domId: string; imageUrl: string 
      const rectLeftCenter = rect.left + rect.width / 2;
      const rectTopCenter = rect.top + rect.height / 2;
      
-     // Get true pixel distance from mouse to image center, mapped gracefully 
-     const mousePxX = (state.pointer.x + 1) / 2 * size.width;
-     const mousePxY = (-state.pointer.y + 1) / 2 * size.height;
+     // Get true pixel distance from mouse to image center, mapped gracefully via bounded refs
+     const mousePxX = (pointerPos.current.x + 1) / 2 * size.width;
+     const mousePxY = (-pointerPos.current.y + 1) / 2 * size.height;
      
      const distX = (mousePxX - rectLeftCenter) / rect.width;
      const distY = (mousePxY - rectTopCenter) / rect.height;

@@ -17,8 +17,21 @@ const BOOT_LOGS = [
 
 export default function BootSequence() {
   const { progress } = useProgress();
+  const [isReady, setIsReady] = React.useState(false);
+
+  // Shader Pre-Compilation Hack: Force the physical loading screen to persist for explicitly 800ms 
+  // after R3F asserts 100% loaded. This affords the GPU the critical silent background cycles it natively needs
+  // to finally compile the heavy MeshDistortMaterial and PostProcessing buffers, thoroughly eliminating the first-frame drop heavily documented.
+  React.useEffect(() => {
+    let t: NodeJS.Timeout;
+    if (progress >= 100) {
+      t = setTimeout(() => setIsReady(true), 800);
+    }
+    return () => clearTimeout(t);
+  }, [progress]);
+
   // Derived UI State (Directly calculated from WebGL progress hook without risking cascading re-renders)
-  const actionRequired = progress >= 100;
+  const actionRequired = isReady;
   const logIndex = actionRequired 
     ? BOOT_LOGS.length - 1 
     : Math.min(Math.floor((progress / 100) * BOOT_LOGS.length), BOOT_LOGS.length - 1);
