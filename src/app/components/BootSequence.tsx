@@ -44,10 +44,11 @@ export default function BootSequence() {
   const { setIsBooted, triggerSFX } = useStageStore();
 
   useEffect(() => {
-    // Lock scrolling explicitly during initialization
-    document.body.style.overflow = "hidden";
+    // The boot sequence absolute layer z-[9999] handles interaction boundaries effectively natively without Javascript.
+    // Explicit Javascript body lock overrides cause perpetual mobile freezes if components crash.
+    // This strictly ensures the layout resolves naturally, and enforces a reset if previously bound elsewhere.
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "";
     };
   }, []);
 

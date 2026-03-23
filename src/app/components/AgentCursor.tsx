@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useStageStore } from "../store/stageStore";
 
@@ -8,22 +8,8 @@ export default function AgentCursor() {
   const outerRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
   const { sfxTrigger, isBooted } = useStageStore();
-  const [isTouchDevice, setIsTouchDevice] = useState(true);
-
-  // Initial secure client-bound execution to fingerprint the device capability
-  useEffect(() => {
-    let t: NodeJS.Timeout;
-    if (window.matchMedia('(pointer: fine)').matches) {
-      t = setTimeout(() => setIsTouchDevice(false), 10);
-    }
-    return () => {
-      if (t) clearTimeout(t);
-    };
-  }, []);
 
   useEffect(() => {
-    if (isTouchDevice) return;
-
     // Hide default cursor globally, overriding any lingering default OS hands
     document.body.style.cursor = "none";
     
@@ -54,12 +40,10 @@ export default function AgentCursor() {
       window.removeEventListener("mousemove", handleMouseMove);
       if (document.head.contains(style)) document.head.removeChild(style);
     };
-  }, [isTouchDevice]);
+  }, []);
 
   // Reactive UI scaling based on global SFX hooks
   useEffect(() => {
-    if (isTouchDevice) return;
-    
     if (sfxTrigger === "hover") {
       // Inflates when interacting with magnetic buttons
       gsap.killTweensOf(outerRef.current);
@@ -72,12 +56,12 @@ export default function AgentCursor() {
       gsap.to(coreRef.current, { scale: 1, duration: 0.6, delay: 0.2, ease: "elastic.out(1, 0.4)" });
       gsap.fromTo(outerRef.current, { rotation: 0 }, { rotation: 180, duration: 0.8, ease: "power2.out" });
     }
-  }, [sfxTrigger, isTouchDevice]);
+  }, [sfxTrigger]);
 
-  if (!isBooted || isTouchDevice) return null;
+  if (!isBooted) return null;
 
   return (
-    <>
+    <div className="hidden md:block">
       {/* Outer Ring — Hollow 1px bordered glass token */}
       <div 
         ref={outerRef} 
@@ -90,6 +74,6 @@ export default function AgentCursor() {
         className="fixed top-0 left-0 w-[6px] h-[6px] rounded-full bg-white mix-blend-difference"
         style={{ boxShadow: "0 0 12px 3px rgba(255,255,255,0.7)", pointerEvents: "none", zIndex: 99999 }}
       />
-    </>
+    </div>
   );
 }
